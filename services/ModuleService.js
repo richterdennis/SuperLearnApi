@@ -1,8 +1,11 @@
-exports.init = function(api) {
-	api.put('/module/{moduleId}/passed', function(req, res) {
-		// updateModule
-	});
-	api.get('/modules', function(req, res) {
-		// getModules
-	});
-}
+const express = require('express');
+const router = express.Router();
+
+router.put('/module/{moduleId}/passed', function(req, res) {
+	// updateModule
+});
+router.get('/modules', function(req, res) {
+	// getModules
+});
+
+exports.router = router;

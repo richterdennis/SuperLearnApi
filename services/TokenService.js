@@ -1,8 +1,11 @@
-exports.init = function(api) {
-	api.get('/token/test/{token}', function(req, res) {
-		// testToken
-	});
-	api.get('/token/update/{token}', function(req, res) {
-		// updateToken
-	});
-}
+const express = require('express');
+const router = express.Router();
+
+router.get('/token/test/{token}', function(req, res) {
+	// testToken
+});
+router.get('/token/update/{token}', function(req, res) {
+	// updateToken
+});
+
+exports.router = router;
