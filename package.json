@@ -1,0 +1,23 @@
+{
+  "name": "super-learn-api",
+  "version": "1.0.0",
+  "description": "This is the API part from a very nice project called SuperLearn",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richterdennis/SuperLearnApi.git"
+  },
+  "author": "Dennis Richter",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/richterdennis/SuperLearnApi/issues"
+  },
+  "homepage": "https://github.com/richterdennis/SuperLearnApi#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
