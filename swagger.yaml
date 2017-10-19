@@ -613,9 +613,7 @@ paths:
         200:
           description: Successful operation
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/Round'
+            $ref: '#/definitions/Round'
         400:
           description: Invalid ID supplied
         404:
@@ -639,9 +637,7 @@ paths:
         200:
           description: Successful operation
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/Round'
+            $ref: '#/definitions/Round'
         400:
           description: Invalid ID supplied
         404:
