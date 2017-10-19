@@ -368,6 +368,8 @@ paths:
           description: Object successfully updated
         400:
           description: Invalid ID supplied
+        403:
+          description: Forbitten
         404:
           description: Object not found
         405:
@@ -389,6 +391,8 @@ paths:
           description: Object successfully deleted
         400:
           description: Invalid ID supplied
+        403:
+          description: Forbitten
         404:
           description: Object not found
   /questions:
@@ -433,7 +437,37 @@ paths:
               $ref: '#/definitions/Question'
       security:
         - AppKeyAuth: []
-
+  /module/{moduleId}/questions/random:
+    get:
+      tags:
+      - question
+      summary: Get a bunch of random questions from a specific module
+      description: Returns an question array of random questions
+      operationId: getRandomQuestions_
+      parameters:
+      - name: moduleId
+        in: path
+        description: ID of module to get the questions from
+        type: integer
+        required: true
+      - name: size
+        in: query
+        description: Size of bunch (Must be between 1 and 20; Default is 10)
+        type: integer
+        minimum: 1
+        maximum: 20
+        default: 10
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+      security:
+        - AppKeyAuth: []
   /answer/{answerId}:
     put:
       tags:
@@ -460,6 +494,8 @@ paths:
           description: Object successfully updated
         400:
           description: Invalid ID supplied
+        403:
+          description: Forbitten
         404:
           description: Object not found
         405:
@@ -490,6 +526,8 @@ paths:
           description: Object successfully updated
         400:
           description: Invalid ID supplied
+        403:
+          description: Forbitten
         404:
           description: Object not found
         405:
