@@ -1143,6 +1143,9 @@ definitions:
       password:
         type: string
         example: passw0rd
+      deviceId:
+        type: string
+        format: uuid
   User:reset:
     type: object
     properties:

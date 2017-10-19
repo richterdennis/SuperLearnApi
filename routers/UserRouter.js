@@ -93,7 +93,8 @@ router.delete('/me', function(req, res) {
  * @body*  {Object}  Login object
  *    {
  *      "email": "user@example.com",  | required
- *      "password": "passw0rd"       <|>
+ *      "password": "passw0rd"        |
+ *      "deviceId": "string"         <|>
  *    }
  *
  * @response  {200}  Successful operation
