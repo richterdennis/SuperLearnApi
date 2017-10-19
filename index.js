@@ -49,8 +49,23 @@ api.use('/api', UserService.router);
  */
 api.use('/api', TokenService.router);
 
+/**
+ * medals
+ * The medals are user specific and encourages the game motivation
+ *
+ * GET /medals  Get all medals for the logged in user
+ */
 api.use('/api', MedalService.router);
+
+/**
+ * module
+ * A module is e. g. "PG - Programmieren Grundlagen"
+ *
+ * PUT /module/:moduleId/passed  Set an module to passed
+ * GET /modules                  Get all modules
+ */
 api.use('/api', ModuleService.router);
+
 api.use('/api', QuestionService.router);
 api.use('/api', ReportService.router);
 api.use('/api', RoundService.router);
