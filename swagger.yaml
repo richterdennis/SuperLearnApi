@@ -500,6 +500,31 @@ paths:
           description: Object not found
         405:
           description: Invalid input
+  /solution
+    post:
+      tags:
+      - question
+      summary: Creates a solution
+      description: This can only be done if this is a solution of your question or you have manager rights
+      operationId: createSolution
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Solution object
+        required: true
+        schema:
+          $ref: '#/definitions/Solution:create'
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        403:
+          description: Forbitten
+        405:
+          description: Invalid input
   /solution/{solutionId}:
     put:
       tags:
@@ -897,6 +922,16 @@ definitions:
         type: string
       image:
         type: string
+  Solution:create:
+    type: object
+    properties:
+      text:
+        type: string
+      image:
+        type: string
+      questionId:
+        type: integer
+        example: 1337
   Solution:update:
     type: object
     properties:

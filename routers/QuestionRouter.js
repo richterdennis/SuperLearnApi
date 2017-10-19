@@ -226,6 +226,35 @@ router.put('/answer/:answerId', function(req, res) {
 });
 
 /**
+ * Creates a solution
+ * This can only be done if this is a solution of your question or you have manager rights
+ *
+ * @security  AppKeyAuth, TokenAuth
+ *
+ * @path*  {integer}  answerId  ID of solution to update
+ *
+ * @body*  {Object}  Solution object
+ *    {
+ *      "text": "string",
+ *      "image": "string",
+ *      "questionId": 1337
+ *    }
+ *
+ * @response  {200}  Object successfully updated
+ * @return  CreateResponse
+ *    {
+ *      "id": 1337
+ *    }
+ *
+ * @response  {400}  Invalid ID supplied
+ * @response  {403}  Forbitten
+ * @response  {405}  Invalid input
+ */
+router.post('/solution', function(req, res) {
+  // createSolution
+});
+
+/**
  * Updates an existing solution
  * This can only be done if this is a solution of your question or you have manager rights
  *
