@@ -1,0 +1,1139 @@
+swagger: '2.0'
+info:
+  title: SuperLearn API
+  version: 1.0.0
+  description: |
+    This is the API part from a very nice project called SuperLearn
+  license:
+    name: GNU General Public License v3.0
+    url: http://www.gnu.org/licenses/gpl-3.0.html
+
+host: 207.154.239.184:8002
+basePath: /api
+
+tags:
+- name: me
+  description: This is the representation of your user object
+- name: token
+- name: medals
+  description: The medals are user specific and encourages the game motivation
+- name: module
+  description: A module is e. g. "PG - Programmieren Grundlagen"
+- name: question
+  description: A question can be of three types (boolean, exact, one of fout)
+- name: report
+  description: You can report a question (offensive, spelling ...)
+- name: round
+  description: A game round is about 10 questions
+- name: studiesCourse
+  description: Your course of studies is maybe "Medieninformatik"
+- name: tag
+  description: You can tag your questions to prevent duplicates
+- name: user
+  description: Go to another user profile then yours
+- name: vote
+  description: Vote a question or a user
+
+securityDefinitions:
+  AppKeyAuth:
+    type: apiKey
+    in: header
+    name: X-App-Key
+    description: Your APP needs to be authorized by an APP-Key
+  TokenAuth:
+    type: apiKey
+    in: header
+    name: X-User-Token
+    description: You needs to be authorized by an user token
+
+security:
+  - AppKeyAuth: []
+    TokenAuth: []
+
+paths:
+  /me:
+    post:
+      tags:
+      - me
+      summary: Creates a new user account
+      operationId: createUser
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: User object that needs to be created
+        required: true
+        schema:
+          $ref: '#/definitions/User:create'
+      responses:
+        201:
+          description: Object successfully created
+          schema:
+            $ref: '#/definitions/Token'
+        405:
+          description: Invalid input
+      security:
+      - AppKeyAuth: []
+    get:
+      tags:
+      - me
+      summary: Gets my profile
+      description: Returns a single user
+      operationId: getUser_
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: Object not found
+    put:
+      tags:
+      - me
+      summary: Updates my profile
+      operationId: updateUser_
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: User object that needs to be updated
+        required: true
+        schema:
+          $ref: '#/definitions/User:update'
+      responses:
+        200:
+          description: Object successfully updated
+        404:
+          description: Object not found
+        405:
+          description: Invalid input
+    delete:
+      tags:
+      - me
+      summary: Deletes my user profile
+      operationId: deleteUser
+      responses:
+        204:
+          description: Object successfully deleted
+        404:
+          description: Object not found
+  /me/login:
+    post:
+      tags:
+      - me
+      summary: Login with my email and my password
+      operationId: login
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Login object
+        required: true
+        schema:
+          $ref: '#/definitions/User:login'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Token'
+        404:
+          description: Object not found
+        405:
+          description: Invalid password
+      security:
+        - AppKeyAuth: []
+  /me/reset:
+    post:
+      tags:
+      - me
+      summary: Reset my password
+      description: The destination given in the body is the redirect destination after the user clicks the link in the reset email. The reset token would be appended at the end separatet with a slash (`http://example.org/reset` woud be to `http://example.org/reset/{token}`).
+      operationId: reset
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Reset object
+        required: true
+        schema:
+          $ref: '#/definitions/User:reset'
+      responses:
+        200:
+          description: Successful operation
+        404:
+          description: Object not found
+      security:
+        - AppKeyAuth: []
+  /confirm/{token}:
+    get:
+      tags:
+      - me
+      summary: Confirm a reset request (Link from email)
+      description: After a user requested a reset this api endpoint are send via email
+      operationId: confirmStep1
+      parameters:
+      - name: token
+        in: path
+        description: The confirm token
+        required: true
+        type: string
+      responses:
+        303:
+          description: Redirects to reset page where you can enter your new password
+        400:
+          description: Invalid token supplied
+        404:
+          description: Token not found
+      security: []
+    put:
+      tags:
+      - me
+      summary: Confirm a reset request
+      description: Reset a users password
+      operationId: confirmStep2
+      consumes:
+      - application/json
+      parameters:
+      - name: token
+        in: path
+        description: The confirm token
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The new password
+        required: true
+        schema:
+          type: object
+          properties:
+            password:
+              type: string
+              example: passw1rd
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid token supplied
+        404:
+          description: Token not found
+        405:
+          description: Invalid input
+      security:
+        - AppKeyAuth: []
+
+  /token/test/{token}:
+    get:
+      tags:
+      - token
+      summary: Test if a token is valid
+      operationId: testToken
+      parameters:
+      - name: token
+        in: path
+        description: Token to test
+        required: true
+        type: string
+      responses:
+        200:
+          description: Token is valid
+        401:
+          description: Token is not valid
+  /token/update/{token}:
+    get:
+      tags:
+      - token
+      summary: Update a token before he is expiring
+      operationId: updateToken
+      parameters:
+      - name: token
+        in: path
+        description: Current token
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Token'
+        401:
+          description: Token is not valid
+
+  /medals:
+    get:
+      tags:
+      - medals
+      summary: Get all medals for the logged in user
+      description: Returns an medal array of all medals
+      operationId: getMedals
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Medal'
+
+  /module/{moduleId}/passed:
+    put:
+      tags:
+      - module
+      summary: Set an module to passed
+      operationId: updateModule
+      parameters:
+      - name: moduleId
+        in: path
+        description: ID of module to update
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+  /modules:
+    get:
+      tags:
+      - module
+      summary: Get all modules
+      description: Returns an module array of all modules
+      operationId: getModules
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Module'
+  /question:
+    post:
+      tags:
+      - question
+      summary: Creates a new question
+      operationId: createQuestion
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Question object that needs to be created
+        required: true
+        schema:
+          $ref: '#/definitions/Question:create'
+      responses:
+        201:
+          description: Object successfully created
+          schema:
+            $ref: '#/definitions/CreateResponse'
+        405:
+          description: Invalid input
+  /question/{questionId}:
+    put:
+      tags:
+      - question
+      summary: Updates an existing question
+      description: This can only be done if this is your question or you have manager rights
+      operationId: updateQuestion
+      consumes:
+      - application/json
+      parameters:
+      - name: questionId
+        in: path
+        description: ID of question to update
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: Question object
+        required: true
+        schema:
+          $ref: '#/definitions/Question:update'
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+        405:
+          description: Invalid input
+    delete:
+      tags:
+      - question
+      summary: Deletes an existing question but not for the creator
+      description: This can only be done, if you have manager rights
+      operationId: deleteQuestion
+      parameters:
+      - name: questionId
+        in: path
+        description: ID of question to delete
+        required: true
+        type: integer
+      responses:
+        204:
+          description: Object successfully deleted
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+  /questions:
+    get:
+      tags:
+      - question
+      summary: Get all my questions
+      description: Returns an question array of all my questions
+      operationId: getMyQuestions
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+  /questions/random:
+    get:
+      tags:
+      - question
+      summary: Get a bunch of random questions
+      description: Returns an question array of random questions
+      operationId: getRandomQuestions
+      parameters:
+      - name: size
+        in: query
+        description: Size of bunch (Must be between 1 and 20; Default is 10)
+        type: integer
+        minimum: 1
+        maximum: 20
+        default: 10
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+      security:
+        - AppKeyAuth: []
+
+  /answer/{answerId}:
+    put:
+      tags:
+      - question
+      summary: Updates an existing answer
+      description: This can only be done if this is a answer of your question or you have manager rights
+      operationId: updateAnswer
+      consumes:
+      - application/json
+      parameters:
+      - name: answerId
+        in: path
+        description: ID of answer to update
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: Answer object
+        required: true
+        schema:
+          $ref: '#/definitions/Answer:update'
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+        405:
+          description: Invalid input
+  /solution/{solutionId}:
+    put:
+      tags:
+      - question
+      summary: Updates an existing solution
+      description: This can only be done if this is a solution of your question or you have manager rights
+      operationId: updateSolution
+      consumes:
+      - application/json
+      parameters:
+      - name: solutionId
+        in: path
+        description: ID of solution to update
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: Solution object
+        required: true
+        schema:
+          $ref: '#/definitions/Solution:update'
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+        405:
+          description: Invalid input
+
+  /report:
+    post:
+      tags:
+      - report
+      summary: Creates a new report
+      operationId: createReport
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Report object that needs to be created
+        required: true
+        schema:
+          $ref: '#/definitions/Report:create'
+      responses:
+        201:
+          description: Object successfully created
+        405:
+          description: Invalid input
+  /report/{reportId}/processed:
+    put:
+      tags:
+      - report
+      summary: Set an existing report to processed
+      description: This can only be done if you have manager rights
+      operationId: updateReport
+      parameters:
+      - name: reportId
+        in: path
+        description: ID of report to update
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+  /reports:
+    get:
+      tags:
+      - report
+      summary: Get all unprocessed reports
+      description: This can only be done if you have manager rights. Returns an report array of all unprocessed reports
+      operationId: getReports
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Report'
+
+  /round/module/{moduleId}:
+    get:
+      tags:
+      - round
+      summary: Gets a random round from a given module ID
+      description: Returns an array of questions
+      operationId: getRoundFromModule
+      produces:
+      - application/json
+      parameters:
+      - name: moduleId
+        in: path
+        description: ID of module to get questions of
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Round'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+  /round/user/{userId}:
+    get:
+      tags:
+      - round
+      summary: Gets a random round from a given user ID
+      description: Returns an array of questions
+      operationId: getRoundFromUser
+      produces:
+      - application/json
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user to get questions of
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Round'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+  /round/{roundId}/finish:
+    put:
+      tags:
+      - round
+      summary: Updates an existing round to finish state
+      operationId: updateRound
+      consumes:
+      - application/json
+      parameters:
+      - name: roundId
+        in: path
+        description: ID of round to finish
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+
+  /studiesCourses:
+    get:
+      tags:
+      - studiesCourse
+      summary: Get all courses of studies
+      description: Returns an course of studies array of all courses of studies
+      operationId: getStudiesCourses
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StudiesCourse'
+  /studiesCourse/request:
+    post:
+      tags:
+      - studiesCourse
+      summary: Creates a request for a new course of studies
+      operationId: createStudiesCourseRequest
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: StudiesCourseRequest object that needs to be created
+        required: true
+        schema:
+          $ref: '#/definitions/StudiesCourse:request'
+      responses:
+        201:
+          description: Object successfully created
+        405:
+          description: Invalid input
+
+  /tag:
+    post:
+      tags:
+      - tag
+      summary: Creates a new tag
+      operationId: createTag
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Tag object that needs to be created
+        required: true
+        schema:
+          $ref: '#/definitions/Tag:create'
+      responses:
+        201:
+          description: Object successfully created
+          schema:
+            $ref: '#/definitions/CreateResponse'
+        405:
+          description: Invalid input
+  /tags:
+    get:
+      tags:
+      - tag
+      summary: Get all tags wich matches the given search query
+      description: Returns an tag array of all tags
+      operationId: getTags
+      parameters:
+      - name: search
+        in: query
+        description: Query to search for
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tag'
+
+  /user/{userId}:
+    get:
+      tags:
+      - user
+      summary: Gets an user by ID
+      description: Returns a single user
+      operationId: getUser
+      produces:
+      - application/json
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user to return
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+  /user:
+    get:
+      tags:
+      - user
+      summary: Get best 10 user for a wall of fame
+      description: Returns an user array of 10 user
+      operationId: getUsers
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+
+  /vote/{value}/question/{questionId}:
+    put:
+      tags:
+      - vote
+      summary: Updates an existing vote or create one
+      operationId: voteQuestion
+      consumes:
+      - application/json
+      parameters:
+      - name: value
+        in: path
+        description: Value of the voting (must be 1, 0 or -1)
+        required: true
+        type: integer
+      - name: questionId
+        in: path
+        description: ID of question to vote
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+        405:
+          description: Invalid input
+  /vote/{value}/user/{userId}:
+    put:
+      tags:
+      - vote
+      summary: Updates an existing vote or create one
+      operationId: voteUser
+      consumes:
+      - application/json
+      parameters:
+      - name: value
+        in: path
+        description: Value of the voting (must be 1, 0 or -1)
+        required: true
+        type: integer
+      - name: userId
+        in: path
+        description: ID of user to vote
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Object successfully updated
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Object not found
+        405:
+          description: Invalid input
+
+definitions:
+  Token:
+    type: object
+    properties:
+      token:
+        type: string
+      expires:
+        type: integer
+        description: timestamp
+  CreateResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: This is the id of the recently created object
+        example: 1337
+  Round:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1337
+      timestamp:
+        type: integer
+        format: timestamp
+      questions:
+        type: array
+        items:
+          $ref: '#/definitions/Question'
+  Answer:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1337
+      correct:
+        type: boolean
+        example: true
+      text:
+        type: string
+        example: null
+  Answer:update:
+    type: object
+    properties:
+      correct:
+        type: boolean
+      text:
+        type: string
+  Solution:
+    type: object
+    properties:
+      id:
+        type: integer
+      text:
+        type: string
+      image:
+        type: string
+  Solution:update:
+    type: object
+    properties:
+      text:
+        type: string
+      image:
+        type: string
+  Question:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1337
+      text:
+        type: string
+        example: Was bedeutet HTML?
+      image:
+        type: string
+      questionType:
+        type: integer
+        enum:
+        - 1:boolean
+        - 2:four
+        - 3:exact
+        example: 2
+      moduleId:
+        type: integer
+      score:
+        type: integer
+      voted:
+        type: integer
+        enum:
+        - 1:upvoted
+        - 0:unvoted
+        - -1:downvoted
+      userId:
+        type: integer
+      created:
+        type: integer
+        format: timestamp
+      answers:
+        type: array
+        items:
+          $ref: '#/definitions/Answer'
+      solution:
+        $ref: '#/definitions/Solution'
+  Question:create:
+    type: object
+    properties:
+      text:
+        type: string
+        example: Was bedeutet CSS?
+      image:
+        type: string
+      questionType:
+        type: integer
+        enum:
+        - 1:boolean
+        - 2:four
+        - 3:exact
+        example: 3
+      moduleId:
+        type: integer
+      tags:
+        type: array
+        items:
+          type: integer
+          description: Tag ID
+      answers:
+        type: array
+        items:
+          $ref: '#/definitions/Answer'
+      solution:
+        $ref: '#/definitions/Solution'
+  Question:update:
+    type: object
+    properties:
+      text:
+        type: string
+        example: Was bedeutet HTML?
+      image:
+        type: string
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+      text:
+        type: string
+  Tag:create:
+    type: object
+    properties:
+      text:
+        type: string
+  Report:
+    type: object
+    properties:
+      id:
+        type: integer
+      reportTypeId:
+        type: integer
+        enum:
+        - 1:offensive
+        - 2:duplicate
+        - 3:spelling
+        - 4:troll
+        - 5:other
+      text:
+        type: string
+      questionId:
+        type: integer
+      userId:
+        type: integer
+      created:
+        type: integer
+        format: timestamp
+  Report:create:
+    type: object
+    properties:
+      reportTypeId:
+        type: integer
+        enum:
+        - 1:offensive
+        - 2:duplicate
+        - 3:spelling
+        - 4:troll
+        - 5:other
+      text:
+        type: string
+      questionId:
+        type: integer
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      email:
+        type: string
+        format: email
+      nickname:
+        type: string
+        example: JonSmith1337
+      image:
+        type: string
+      score:
+        type: integer
+      confirmed:
+        type: boolean
+        default: false
+      created:
+        type: integer
+        format: timestamp
+      rank:
+        type: integer
+        enum:
+        - 1:student
+        - 2:admin
+        - 3:prof
+        - 4:lecturer
+        example: 1
+      role:
+        type: integer
+        enum:
+        - 1:user
+        - 2:manager
+        example: 1
+  User:create:
+    type: object
+    properties:
+      email:
+        type: string
+        format: email
+      nickname:
+        type: string
+        example: JonSmith1337
+      password:
+        type: string
+        example: passw0rd
+      image:
+        type: string
+      rank:
+        type: integer
+        enum:
+        - 1:student
+        - 2:admin
+        - 3:prof
+        - 4:lecturer
+        example: 1
+      studiesCourseId:
+        type: integer
+        example: 42
+  User:update:
+    type: object
+    properties:
+      nickname:
+        type: string
+        example: JonSmith42
+      image:
+        type: string
+  User:login:
+    type: object
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        example: passw0rd
+  User:reset:
+    type: object
+    properties:
+      email:
+        type: string
+        format: email
+      destination:
+        type: string
+        format: url
+  Medal:
+    type: object
+    properties:
+      text:
+        type: string
+        example: my_questions_upvoted
+      bronze:
+        type: integer
+        example: 10
+      silver:
+        type: integer
+        example: 1000
+      gold:
+        type: integer
+        example: 100000
+      progress:
+        type: integer
+        description: The exact progress of the medal
+        example: 1337
+      value:
+        type: integer
+        enum:
+        - 0:nothing
+        - 1:bronze
+        - 2:silver
+        - 3:gold
+        example: 2
+  Module:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1337
+      text:
+        type: string
+        example: Grundalgen der Informatik
+      passed:
+        type: boolean
+        default: false
+      lastRequested:
+        type: integer
+        format: timestamp
+      semester:
+        type: integer
+        example: 1
+      progress:
+        type: integer
+        description: Progress in percent
+        example: 63
+  StudiesCourse:
+    type: object
+    properties:
+      id:
+        type: integer
+      text:
+        type: string
+  StudiesCourse:request:
+    type: object
+    properties:
+      text:
+        type: string
