@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Get all courses of studies
@@ -36,5 +35,3 @@ router.get('/studiesCourses', function(req, res) {
 router.post('/studiesCourse/request', function(req, res) {
 	// createStudiesCourseRequest
 });
-
-module.exports = router;

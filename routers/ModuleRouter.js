@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Set an module to passed
@@ -38,5 +37,3 @@ router.put('/module/:moduleId/passed', function(req, res) {
 router.get('/modules', function(req, res) {
 	// getModules
 });
-
-module.exports = router;

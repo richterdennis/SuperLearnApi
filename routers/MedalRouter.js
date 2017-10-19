@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Get all medals for the logged in user
@@ -23,5 +22,3 @@ const router = express.Router();
 router.get('/medals', function(req, res) {
 	// getMedals
 });
-
-module.exports = router;

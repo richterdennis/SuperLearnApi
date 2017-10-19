@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Creates a new question
@@ -249,5 +248,3 @@ router.put('/answer/:answerId', function(req, res) {
 router.put('/solution/:solutionId', function(req, res) {
 	// updateSolution
 });
-
-module.exports = router;

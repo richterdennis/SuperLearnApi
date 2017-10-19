@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Creates a new user account
@@ -225,5 +224,3 @@ router.get('/user/:userId', function(req, res) {
 router.get('/user', function(req, res) {
 	// getUsers
 });
-
-module.exports = router;

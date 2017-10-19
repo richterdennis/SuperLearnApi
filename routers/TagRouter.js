@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Creates a new tag
@@ -43,5 +42,3 @@ router.post('/tag', function(req, res) {
 router.get('/tags', function(req, res) {
 	// getTags
 });
-
-module.exports = router;

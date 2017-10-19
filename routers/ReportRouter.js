@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Creates a new report
@@ -62,5 +61,3 @@ router.put('/report/:reportId/processed', function(req, res) {
 router.get('/reports', function(req, res) {
 	// getReports
 });
-
-module.exports = router;

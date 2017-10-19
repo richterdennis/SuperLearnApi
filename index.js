@@ -2,7 +2,7 @@
 const PORT = process.env.PORT || 8002;
 
 // node_modules
-const express = require('express');
+global.express = require('express');
 
 // imports
 const UserRouter          = require('./routers/UserRouter');

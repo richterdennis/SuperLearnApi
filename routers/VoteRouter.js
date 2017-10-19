@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Updates an existing vote or create one
@@ -34,5 +33,3 @@ router.put('/vote/:value/question/:questionId', function(req, res) {
 router.put('/vote/:value/user/:userId', function(req, res) {
 	// voteUser
 });
-
-module.exports = router;

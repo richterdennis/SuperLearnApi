@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Gets a random round from a given module ID
@@ -109,5 +108,3 @@ router.get('/round/user/:userId', function(req, res) {
 router.put('/round/:roundId/finish', function(req, res) {
 	// updateRound
 });
-
-module.exports = router;

@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = module.exports = exports = express.Router();
 
 /**
  * Test if a token is valid
@@ -34,5 +33,3 @@ router.get('/token/test/:token', function(req, res) {
 router.get('/token/update/:token', function(req, res) {
 	// updateToken
 });
-
-module.exports = router;
