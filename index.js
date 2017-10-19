@@ -5,21 +5,21 @@ const PORT = process.env.PORT || 8002;
 const express = require('express');
 
 // imports
-const UserService          = require('./services/UserService');
-const TokenService         = require('./services/TokenService');
-const MedalService         = require('./services/MedalService');
-const ModuleService        = require('./services/ModuleService');
-const QuestionService      = require('./services/QuestionService');
-const ReportService        = require('./services/ReportService');
-const RoundService         = require('./services/RoundService');
-const StudiesCourseService = require('./services/StudiesCourseService');
-const TagService           = require('./services/TagService');
-const VoteService          = require('./services/VoteService');
+const UserRouter          = require('./routers/UserRouter');
+const TokenRouter         = require('./routers/TokenRouter');
+const MedalRouter         = require('./routers/MedalRouter');
+const ModuleRouter        = require('./routers/ModuleRouter');
+const QuestionRouter      = require('./routers/QuestionRouter');
+const ReportRouter        = require('./routers/ReportRouter');
+const RoundRouter         = require('./routers/RoundRouter');
+const StudiesCourseRouter = require('./routers/StudiesCourseRouter');
+const TagRouter           = require('./routers/TagRouter');
+const VoteRouter          = require('./routers/VoteRouter');
 
 // Create Api
 const api = express();
 
-// Init routers from services
+// Init routers
 
 /**
  * me
@@ -39,7 +39,7 @@ const api = express();
  * GET    /user/:userId    Gets an user by ID
  * GET    /user            Get best 10 user for a wall of fame
  */
-api.use('/api', UserService.router);
+api.use('/api', UserRouter.router);
 
 /**
  * token
@@ -47,7 +47,7 @@ api.use('/api', UserService.router);
  * GET /token/test/:token    Test if a token is valid
  * GET /token/update/:token  Update a token before he is expiring
  */
-api.use('/api', TokenService.router);
+api.use('/api', TokenRouter.router);
 
 /**
  * medals
@@ -55,7 +55,7 @@ api.use('/api', TokenService.router);
  *
  * GET /medals  Get all medals for the logged in user
  */
-api.use('/api', MedalService.router);
+api.use('/api', MedalRouter.router);
 
 /**
  * module
@@ -64,7 +64,7 @@ api.use('/api', MedalService.router);
  * PUT /module/:moduleId/passed  Set an module to passed
  * GET /modules                  Get all modules
  */
-api.use('/api', ModuleService.router);
+api.use('/api', ModuleRouter.router);
 
 /**
  * question
@@ -78,7 +78,7 @@ api.use('/api', ModuleService.router);
  * PUT    /answer/:answerId      Updates an existing answer
  * PUT    /solution/:solutionId  Updates an existing solution
  */
-api.use('/api', QuestionService.router);
+api.use('/api', QuestionRouter.router);
 
 /**
  * report
@@ -88,7 +88,7 @@ api.use('/api', QuestionService.router);
  * PUT  /report/:reportId/processed  Set an existing report to processed
  * GET  /reports                      Get all unprocessed reports
  */
-api.use('/api', ReportService.router);
+api.use('/api', ReportRouter.router);
 
 /**
  * round
@@ -98,7 +98,7 @@ api.use('/api', ReportService.router);
  * GET /round/user/:userId      Gets a random round from a given user ID
  * PUT /round/:roundId/finish   Updates an existing round to finish state
  */
-api.use('/api', RoundService.router);
+api.use('/api', RoundRouter.router);
 
 /**
  * studiesCourse
@@ -107,7 +107,7 @@ api.use('/api', RoundService.router);
  * GET  /studiesCourses         Get all courses of studies
  * POST /studiesCourse/request  Creates a request for a new course of studies
  */
-api.use('/api', StudiesCourseService.router);
+api.use('/api', StudiesCourseRouter.router);
 
 /**
  * tag
@@ -116,7 +116,7 @@ api.use('/api', StudiesCourseService.router);
  * POST /tag   Creates a new tag
  * GET  /tags  Get all tags wich matches the given search query
  */
-api.use('/api', TagService.router);
+api.use('/api', TagRouter.router);
 
 /**
  * vote
@@ -125,7 +125,7 @@ api.use('/api', TagService.router);
  * PUT /vote/:value/question/:questionId  Updates an existing vote or create one
  * PUT /vote/:value/user/:userId          Updates an existing vote or create one
  */
-api.use('/api', VoteService.router);
+api.use('/api', VoteRouter.router);
 
 // Start server
 api.listen(PORT, function() {
