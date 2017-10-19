@@ -20,7 +20,7 @@ tags:
 - name: module
   description: A module is e. g. "PG - Programmieren Grundlagen"
 - name: question
-  description: A question can be of three types (boolean, exact, one of fout)
+  description: A question can be of three types (boolean, exact or one of four)
 - name: report
   description: You can report a question (offensive, spelling ...)
 - name: round

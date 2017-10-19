@@ -66,11 +66,65 @@ api.use('/api', MedalService.router);
  */
 api.use('/api', ModuleService.router);
 
+/**
+ * question
+ * A question can be of three types (boolean, exact or one of four)
+ *
+ * POST   /question               Creates a new question
+ * PUT    /question/:questionId  Updates an existing question
+ * DELETE /question/:questionId  Deletes an existing question but not for the creator
+ * GET    /questions              Get all my questions
+ * GET    /questions/random       Get a bunch of random questions
+ * PUT    /answer/:answerId      Updates an existing answer
+ * PUT    /solution/:solutionId  Updates an existing solution
+ */
 api.use('/api', QuestionService.router);
+
+/**
+ * report
+ * You can report a question (offensive, spelling ...)
+ *
+ * POST /report                       Creates a new report
+ * PUT  /report/:reportId/processed  Set an existing report to processed
+ * GET  /reports                      Get all unprocessed reports
+ */
 api.use('/api', ReportService.router);
+
+/**
+ * round
+ * A game round is about 10 questions
+ *
+ * GET /round/module/:moduleId  Gets a random round from a given module ID
+ * GET /round/user/:userId      Gets a random round from a given user ID
+ * PUT /round/:roundId/finish   Updates an existing round to finish state
+ */
 api.use('/api', RoundService.router);
+
+/**
+ * studiesCourse
+ * Your course of studies is maybe "Medieninformatik"
+ *
+ * GET  /studiesCourses         Get all courses of studies
+ * POST /studiesCourse/request  Creates a request for a new course of studies
+ */
 api.use('/api', StudiesCourseService.router);
+
+/**
+ * tag
+ * You can tag your questions to prevent duplicates
+ *
+ * POST /tag   Creates a new tag
+ * GET  /tags  Get all tags wich matches the given search query
+ */
 api.use('/api', TagService.router);
+
+/**
+ * vote
+ * Vote a question or a user
+ *
+ * PUT /vote/:value/question/:questionId  Updates an existing vote or create one
+ * PUT /vote/:value/user/:userId          Updates an existing vote or create one
+ */
 api.use('/api', VoteService.router);
 
 // Start server
