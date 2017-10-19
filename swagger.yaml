@@ -1046,6 +1046,9 @@ definitions:
       confirmed:
         type: boolean
         default: false
+      banned:
+        type: boolean
+        default: false
       created:
         type: integer
         format: timestamp
