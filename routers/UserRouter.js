@@ -226,4 +226,4 @@ router.get('/user', function(req, res) {
 	// getUsers
 });
 
-exports.router = router;
+module.exports = router;

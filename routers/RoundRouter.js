@@ -110,4 +110,4 @@ router.put('/round/:roundId/finish', function(req, res) {
 	// updateRound
 });
 
-exports.router = router;
+module.exports = router;

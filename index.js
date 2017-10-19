@@ -39,7 +39,7 @@ const api = express();
  * GET    /user/:userId    Gets an user by ID
  * GET    /user            Get best 10 user for a wall of fame
  */
-api.use('/api', UserRouter.router);
+api.use('/api', UserRouter);
 
 /**
  * token
@@ -47,7 +47,7 @@ api.use('/api', UserRouter.router);
  * GET /token/test/:token    Test if a token is valid
  * GET /token/update/:token  Update a token before he is expiring
  */
-api.use('/api', TokenRouter.router);
+api.use('/api', TokenRouter);
 
 /**
  * medals
@@ -55,7 +55,7 @@ api.use('/api', TokenRouter.router);
  *
  * GET /medals  Get all medals for the logged in user
  */
-api.use('/api', MedalRouter.router);
+api.use('/api', MedalRouter);
 
 /**
  * module
@@ -64,7 +64,7 @@ api.use('/api', MedalRouter.router);
  * PUT /module/:moduleId/passed  Set an module to passed
  * GET /modules                  Get all modules
  */
-api.use('/api', ModuleRouter.router);
+api.use('/api', ModuleRouter);
 
 /**
  * question
@@ -78,7 +78,7 @@ api.use('/api', ModuleRouter.router);
  * PUT    /answer/:answerId      Updates an existing answer
  * PUT    /solution/:solutionId  Updates an existing solution
  */
-api.use('/api', QuestionRouter.router);
+api.use('/api', QuestionRouter);
 
 /**
  * report
@@ -88,7 +88,7 @@ api.use('/api', QuestionRouter.router);
  * PUT  /report/:reportId/processed  Set an existing report to processed
  * GET  /reports                      Get all unprocessed reports
  */
-api.use('/api', ReportRouter.router);
+api.use('/api', ReportRouter);
 
 /**
  * round
@@ -98,7 +98,7 @@ api.use('/api', ReportRouter.router);
  * GET /round/user/:userId      Gets a random round from a given user ID
  * PUT /round/:roundId/finish   Updates an existing round to finish state
  */
-api.use('/api', RoundRouter.router);
+api.use('/api', RoundRouter);
 
 /**
  * studiesCourse
@@ -107,7 +107,7 @@ api.use('/api', RoundRouter.router);
  * GET  /studiesCourses         Get all courses of studies
  * POST /studiesCourse/request  Creates a request for a new course of studies
  */
-api.use('/api', StudiesCourseRouter.router);
+api.use('/api', StudiesCourseRouter);
 
 /**
  * tag
@@ -116,7 +116,7 @@ api.use('/api', StudiesCourseRouter.router);
  * POST /tag   Creates a new tag
  * GET  /tags  Get all tags wich matches the given search query
  */
-api.use('/api', TagRouter.router);
+api.use('/api', TagRouter);
 
 /**
  * vote
@@ -125,7 +125,7 @@ api.use('/api', TagRouter.router);
  * PUT /vote/:value/question/:questionId  Updates an existing vote or create one
  * PUT /vote/:value/user/:userId          Updates an existing vote or create one
  */
-api.use('/api', VoteRouter.router);
+api.use('/api', VoteRouter);
 
 // Start server
 api.listen(PORT, function() {

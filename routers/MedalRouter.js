@@ -24,4 +24,4 @@ router.get('/medals', function(req, res) {
 	// getMedals
 });
 
-exports.router = router;
+module.exports = router;

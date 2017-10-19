@@ -35,4 +35,4 @@ router.put('/vote/:value/user/:userId', function(req, res) {
 	// voteUser
 });
 
-exports.router = router;
+module.exports = router;

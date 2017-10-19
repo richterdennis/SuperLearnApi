@@ -63,4 +63,4 @@ router.get('/reports', function(req, res) {
 	// getReports
 });
 
-exports.router = router;
+module.exports = router;

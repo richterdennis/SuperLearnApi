@@ -44,4 +44,4 @@ router.get('/tags', function(req, res) {
 	// getTags
 });
 
-exports.router = router;
+module.exports = router;

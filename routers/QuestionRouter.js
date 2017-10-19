@@ -250,4 +250,4 @@ router.put('/solution/:solutionId', function(req, res) {
 	// updateSolution
 });
 
-exports.router = router;
+module.exports = router;

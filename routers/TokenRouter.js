@@ -35,4 +35,4 @@ router.get('/token/update/:token', function(req, res) {
 	// updateToken
 });
 
-exports.router = router;
+module.exports = router;

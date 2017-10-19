@@ -37,4 +37,4 @@ router.post('/studiesCourse/request', function(req, res) {
 	// createStudiesCourseRequest
 });
 
-exports.router = router;
+module.exports = router;

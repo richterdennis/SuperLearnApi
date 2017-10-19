@@ -39,4 +39,4 @@ router.get('/modules', function(req, res) {
 	// getModules
 });
 
-exports.router = router;
+module.exports = router;
