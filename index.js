@@ -22,6 +22,12 @@ const api = express();
 // Init routers from services
 
 /**
+ * me
+ * This is the representation of your user object
+ *
+ * user
+ * Go to another user profile then yours
+ *
  * POST   /me              Creates a new user account
  * GET    /me              Gets my profile
  * PUT    /me              Updates my profile
@@ -35,7 +41,14 @@ const api = express();
  */
 api.use('/api', UserService.router);
 
+/**
+ * token
+ *
+ * GET /token/test/:token    Test if a token is valid
+ * GET /token/update/:token  Update a token before he is expiring
+ */
 api.use('/api', TokenService.router);
+
 api.use('/api', MedalService.router);
 api.use('/api', ModuleService.router);
 api.use('/api', QuestionService.router);

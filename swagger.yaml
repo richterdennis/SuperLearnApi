@@ -244,6 +244,8 @@ paths:
           description: Token is valid
         401:
           description: Token is not valid
+      security:
+        - AppKeyAuth: []
   /token/update/{token}:
     get:
       tags:
@@ -263,6 +265,8 @@ paths:
             $ref: '#/definitions/Token'
         401:
           description: Token is not valid
+      security:
+        - AppKeyAuth: []
 
   /medals:
     get:

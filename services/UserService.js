@@ -139,7 +139,7 @@ router.post('/me/reset', function(req, res) {
  *
  * @security  open
  *
- * @path*  {string}  The confirm token
+ * @path*  {string}  token  The confirm token
  *
  * @response  {303}  Redirects to reset page where you can enter your new password
  * @response  {400}  Invalid token supplied
@@ -155,7 +155,8 @@ router.get('/confirm/:token', function(req, res) {
  *
  * @security  AppKeyAuth
  *
- * @path*  {string}  The confirm token
+ * @path*  {string}  token  The confirm token
+ *
  * @body*  {Object}  The new password
  *    {
  *      "password": "passw1rd"  | required
@@ -176,7 +177,7 @@ router.put('/confirm/:token', function(req, res) {
  *
  * @security  AppKeyAuth, TokenAuth
  *
- * @path*  {integer}  ID of user to return
+ * @path*  {integer}  userId  ID of user to return
  *
  * @response  {200}  Successful operation
  * @return  User
