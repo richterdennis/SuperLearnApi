@@ -20,7 +20,21 @@ const VoteService          = require('./services/VoteService');
 const api = express();
 
 // Init routers from services
+
+/**
+ * POST   /me              Creates a new user account
+ * GET    /me              Gets my profile
+ * PUT    /me              Updates my profile
+ * DELETE /me              Deletes my user profile
+ * POST   /me/login        Login with my email and my password
+ * POST   /me/reset        Reset my password
+ * GET    /confirm/:token  Confirm a reset request (Link from email)
+ * PUT    /confirm/:token  Confirm a reset request
+ * GET    /user/:userId    Gets an user by ID
+ * GET    /user            Get best 10 user for a wall of fame
+ */
 api.use('/api', UserService.router);
+
 api.use('/api', TokenService.router);
 api.use('/api', MedalService.router);
 api.use('/api', ModuleService.router);
