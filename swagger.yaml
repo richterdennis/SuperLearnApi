@@ -793,8 +793,6 @@ paths:
       - vote
       summary: Updates an existing vote or create one
       operationId: voteQuestion
-      consumes:
-      - application/json
       parameters:
       - name: value
         in: path
@@ -821,8 +819,6 @@ paths:
       - vote
       summary: Updates an existing vote or create one
       operationId: voteUser
-      consumes:
-      - application/json
       parameters:
       - name: value
         in: path
