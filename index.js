@@ -3,6 +3,7 @@ const PORT = process.env.PORT || 8002;
 
 // node_modules
 global.express = require('express');
+const bodyParser = require('body-parser');
 
 // import auth middlewares
 global.AppKeyAuth = require('./authentication/AppKeyAuthMiddleware');
@@ -22,6 +23,8 @@ const VoteRouter          = require('./routers/VoteRouter');
 
 // Create Api
 const api = express();
+api.use(bodyParser.urlencoded({ extended: true }));
+api.use(bodyParser.json());
 
 // Init routers
 
