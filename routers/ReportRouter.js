@@ -15,7 +15,7 @@ const router = module.exports = exports = express.Router();
  * @response  {201}  Object successfully created
  * @response  {405}  Invalid input
  */
-router.post('/report', function(req, res) {
+router.post('/report', AppKeyAuth, TokenAuth, function(req, res) {
 	// createReport
 });
 
@@ -32,7 +32,7 @@ router.post('/report', function(req, res) {
  * @response  {403}  Forbitten
  * @response  {404}  Object not found
  */
-router.put('/report/:reportId/processed', function(req, res) {
+router.put('/report/:reportId/processed', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateReport
 });
 
@@ -58,6 +58,6 @@ router.put('/report/:reportId/processed', function(req, res) {
  *
  * @response  {403}  Forbitten
  */
-router.get('/reports', function(req, res) {
+router.get('/reports', AppKeyAuth, TokenAuth, function(req, res) {
 	// getReports
 });

@@ -4,7 +4,7 @@ const router = module.exports = exports = express.Router();
  * Get all courses of studies
  * Returns an course of studies array of all courses of studies
  *
- * @security  AppKeyAuth, TokenAuth
+ * @security  AppKeyAuth
  *
  * @response  {200}  Successful operation
  * @return  StudiesCourses
@@ -15,7 +15,7 @@ const router = module.exports = exports = express.Router();
  *      }
  *    ]
  */
-router.get('/studiesCourses', function(req, res) {
+router.get('/studiesCourses', AppKeyAuth, function(req, res) {
 	// getStudiesCourses
 });
 
@@ -32,6 +32,6 @@ router.get('/studiesCourses', function(req, res) {
  * @response  {201}  Object successfully created
  * @response  {405}  Invalid input
  */
-router.post('/studiesCourse/request', function(req, res) {
+router.post('/studiesCourse/request', AppKeyAuth, function(req, res) {
 	// createStudiesCourseRequest
 });

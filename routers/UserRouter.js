@@ -24,7 +24,7 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {405}  Invalid input
  */
-router.post('/me', function(req, res) {
+router.post('/me', AppKeyAuth, function(req, res) {
 	// createUser
 });
 
@@ -50,7 +50,7 @@ router.post('/me', function(req, res) {
  *
  * @response  {404}  Object not found
  */
-router.get('/me', function(req, res) {
+router.get('/me', AppKeyAuth, TokenAuth, function(req, res) {
 	// getUser
 });
 
@@ -69,7 +69,7 @@ router.get('/me', function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/me', function(req, res) {
+router.put('/me', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateUser
 });
 
@@ -81,7 +81,7 @@ router.put('/me', function(req, res) {
  * @response  {204}  Object successfully deleted
  * @response  {404}  Object not found
  */
-router.delete('/me', function(req, res) {
+router.delete('/me', AppKeyAuth, TokenAuth, function(req, res) {
 	// deleteUser
 });
 
@@ -107,7 +107,7 @@ router.delete('/me', function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid password
  */
-router.post('/me/login', function(req, res) {
+router.post('/me/login', AppKeyAuth, function(req, res) {
 	// loginUser
 });
 
@@ -129,15 +129,13 @@ router.post('/me/login', function(req, res) {
  * @response  {200}  Successful operation
  * @response  {404}  Object not found
  */
-router.post('/me/reset', function(req, res) {
+router.post('/me/reset', AppKeyAuth, function(req, res) {
 	// createResetToken
 });
 
 /**
  * Confirm a reset request (Link from email)
  * After a user requested a reset this api endpoint are send via email
- *
- * @security  open
  *
  * @path*  {string}  token  The confirm token
  *
@@ -167,7 +165,7 @@ router.get('/confirm/:token', function(req, res) {
  * @response  {404}  Token not found
  * @response  {405}  Invalid input
  */
-router.put('/confirm/:token', function(req, res) {
+router.put('/confirm/:token', AppKeyAuth, function(req, res) {
 	// resetPassword
 });
 
@@ -196,7 +194,7 @@ router.put('/confirm/:token', function(req, res) {
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.get('/user/:userId', function(req, res) {
+router.get('/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
 	// getUser
 });
 
@@ -222,6 +220,6 @@ router.get('/user/:userId', function(req, res) {
  *      }
  *    ]
  */
-router.get('/user', function(req, res) {
+router.get('/user', AppKeyAuth, TokenAuth, function(req, res) {
 	// getUsers
 });

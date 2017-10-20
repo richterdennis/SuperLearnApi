@@ -4,7 +4,11 @@ const PORT = process.env.PORT || 8002;
 // node_modules
 global.express = require('express');
 
-// imports
+// import auth middlewares
+global.AppKeyAuth = require('./authentication/AppKeyAuthMiddleware');
+global.TokenAuth  = require('./authentication/TokenAuthMiddleware');
+
+// import router
 const UserRouter          = require('./routers/UserRouter');
 const TokenRouter         = require('./routers/TokenRouter');
 const MedalRouter         = require('./routers/MedalRouter');

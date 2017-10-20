@@ -11,8 +11,9 @@ const router = module.exports = exports = express.Router();
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.put('/module/:moduleId/passed', function(req, res) {
+router.put('/module/:moduleId/passed', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateModule
+	res.status(200).end();
 });
 
 /**
@@ -34,6 +35,7 @@ router.put('/module/:moduleId/passed', function(req, res) {
  *      }
  *    ]
  */
-router.get('/modules', function(req, res) {
+router.get('/modules', AppKeyAuth, TokenAuth, function(req, res) {
 	// getModules
+	res.status(200).end();
 });

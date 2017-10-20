@@ -43,7 +43,7 @@ const router = module.exports = exports = express.Router();
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.get('/round/module/:moduleId', function(req, res) {
+router.get('/round/module/:moduleId', AppKeyAuth, TokenAuth, function(req, res) {
 	// getRoundFromModule
 });
 
@@ -90,7 +90,7 @@ router.get('/round/module/:moduleId', function(req, res) {
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.get('/round/user/:userId', function(req, res) {
+router.get('/round/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
 	// getRoundFromUser
 });
 
@@ -105,6 +105,6 @@ router.get('/round/user/:userId', function(req, res) {
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.put('/round/:roundId/finish', function(req, res) {
+router.put('/round/:roundId/finish', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateRound
 });

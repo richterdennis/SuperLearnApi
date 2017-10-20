@@ -19,6 +19,6 @@ const router = module.exports = exports = express.Router();
  *      }
  *    ]
  */
-router.get('/medals', function(req, res) {
+router.get('/medals', AppKeyAuth, TokenAuth, function(req, res) {
 	// getMedals
 });

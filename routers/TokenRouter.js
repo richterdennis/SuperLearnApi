@@ -10,7 +10,7 @@ const router = module.exports = exports = express.Router();
  * @response  {200}  Token is valid
  * @response  {401}  Token is not valid
  */
-router.get('/token/test/:token', function(req, res) {
+router.get('/token/test/:token', AppKeyAuth, function(req, res) {
 	// testToken
 });
 
@@ -30,6 +30,6 @@ router.get('/token/test/:token', function(req, res) {
  *
  * @response  {401}  Token is not valid
  */
-router.get('/token/update/:token', function(req, res) {
+router.get('/token/update/:token', AppKeyAuth, function(req, res) {
 	// updateToken
 });

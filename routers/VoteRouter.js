@@ -13,7 +13,7 @@ const router = module.exports = exports = express.Router();
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/vote/:value/question/:questionId', function(req, res) {
+router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
 	// voteQuestion
 });
 
@@ -30,6 +30,6 @@ router.put('/vote/:value/question/:questionId', function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/vote/:value/user/:userId', function(req, res) {
+router.put('/vote/:value/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
 	// voteUser
 });

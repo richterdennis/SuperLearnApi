@@ -18,7 +18,7 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {405}  Invalid input
  */
-router.post('/tag', function(req, res) {
+router.post('/tag', AppKeyAuth, TokenAuth, function(req, res) {
 	// createTag
 });
 
@@ -39,6 +39,7 @@ router.post('/tag', function(req, res) {
  *      }
  *    ]
  */
-router.get('/tags', function(req, res) {
+router.get('/tags', AppKeyAuth, TokenAuth, function(req, res) {
 	// getTags
+	res.status(200).end();
 });

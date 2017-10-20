@@ -36,7 +36,7 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {405}  Invalid input
  */
-router.post('/question', function(req, res) {
+router.post('/question', AppKeyAuth, TokenAuth, function(req, res) {
 	// createQuestion
 });
 
@@ -60,7 +60,7 @@ router.post('/question', function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/question/:questionId', function(req, res) {
+router.put('/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateQuestion
 });
 
@@ -77,7 +77,7 @@ router.put('/question/:questionId', function(req, res) {
  * @response  {403}  Forbitten
  * @response  {404}  Object not found
  */
-router.delete('/question/:questionId', function(req, res) {
+router.delete('/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
 	// deleteQuestion
 });
 
@@ -115,7 +115,7 @@ router.delete('/question/:questionId', function(req, res) {
  *      }
  *    ]
  */
-router.get('/questions', function(req, res) {
+router.get('/questions', AppKeyAuth, TokenAuth, function(req, res) {
 	// getMyQuestions
 });
 
@@ -155,7 +155,7 @@ router.get('/questions', function(req, res) {
  *      }
  *    ]
  */
-router.get('/questions/random', function(req, res) {
+router.get('/questions/random', AppKeyAuth, function(req, res) {
 	// getRandomQuestions
 });
 
@@ -197,8 +197,9 @@ router.get('/questions/random', function(req, res) {
  *      }
  *    ]
  */
-router.get('/module/:moduleId/questions/random', function(req, res) {
+router.get('/module/:moduleId/questions/random', AppKeyAuth, function(req, res) {
   // getRandomQuestions
+  res.status(200).end();
 });
 
 /**
@@ -221,7 +222,7 @@ router.get('/module/:moduleId/questions/random', function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/answer/:answerId', function(req, res) {
+router.put('/answer/:answerId', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateAnswer
 });
 
@@ -250,7 +251,7 @@ router.put('/answer/:answerId', function(req, res) {
  * @response  {403}  Forbitten
  * @response  {405}  Invalid input
  */
-router.post('/solution', function(req, res) {
+router.post('/solution', AppKeyAuth, TokenAuth, function(req, res) {
   // createSolution
 });
 
@@ -274,6 +275,6 @@ router.post('/solution', function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/solution/:solutionId', function(req, res) {
+router.put('/solution/:solutionId', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateSolution
 });
