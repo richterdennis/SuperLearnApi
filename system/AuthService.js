@@ -1,9 +1,12 @@
-exports.isValidApp = function(key) {
-	return new Promise((result, reject) => {
-		db.query('SELECT valid FROM App WHERE token = ?', [key], (err, res) => {
-			if(err) return reject(err);
+/**
+ * Checks if the given key is a valid app key
+ *
+ * @param   {string}   key  The app key
+ * @return  {Boolean}       isValid?
+ */
+exports.isValidApp = async function(key) {
+	const [err, rows] = await db.query('SELECT valid FROM App WHERE token = ?', [key]);
+	if(err) throw err;
 
-			result(res.length && res[0].valid);
-		});
-	});
+	return rows.length && rows[0].valid;
 }

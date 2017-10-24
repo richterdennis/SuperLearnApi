@@ -1,14 +1,17 @@
-exports.createTag = function(tag) {
-	return new Promise((result, reject) => {
-		const data = {
-			text: tag.text,
-			user_id: 1337 // TODO: Replace with real user id
-		};
+/**
+ * Creates a tag
+ *
+ * @param   {Object}  tag  The tag to create
+ * @return  {number}       The id of the inserted tag
+ */
+exports.createTag = async function(tag) {
+	const data = {
+		text: tag.text,
+		user_id: 1337 // TODO: Replace with real user id
+	};
 
-		db.query('INSERT INTO question_tags SET ?', data, (err, res) => {
-			if(err) return reject(err);
+	const [err, res] = db.query('INSERT INTO question_tags SET ?', data);
+	if(err) throw err;
 
-			result(res.insertedId);
-		});
-	});
+	return res.insertedId;
 }
