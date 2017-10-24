@@ -1,8 +1,8 @@
 // Config
 
 let config = {};
-if (require('fs').existsSync('config.json')) {
-	config = require('config.json');
+if (require('fs').existsSync('./config.json')) {
+	config = require('./config.json');
 }
 
 const API_PORT    = process.env.API_PORT    || config.API_PORT    || 8002;

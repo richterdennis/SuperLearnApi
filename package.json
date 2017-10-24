@@ -4,7 +4,9 @@
   "description": "This is the API part from a very nice project called SuperLearn",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "npm run watch",
+    "watch": "nodemon index.js",
+    "server": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +24,8 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "mysql": "^2.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
   }
 }
