@@ -37,6 +37,11 @@ global.db = mysql.createConnection({
   password: DB_PASSWORD,
   database: DB_DATABASE
 });
+
+// Make some often used db functions async
+db.query = helper.toAsync(db, db.query);
+
+// connect to db
 db.connect((err) => {
   if(err) {
     console.error('[SQL] Error connecting: ' + err.stack);
