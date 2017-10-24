@@ -1,3 +1,6 @@
+const UserService = require('../system/UserService');
+const LoginService = require('../system/LoginService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -16,7 +19,7 @@ const router = module.exports = exports = express.Router();
  *    }
  *
  * @response  {201}  Object successfully created
- * @return  Token
+ * @return  Login
  *    {
  *      "token": "string",
  *      "expires": 0
@@ -25,7 +28,23 @@ const router = module.exports = exports = express.Router();
  * @response  {405}  Invalid input
  */
 router.post('/me', AppKeyAuth, function(req, res) {
-	// createUser
+	const user = req.body;
+
+	if(
+		!user          ||
+		!user.email    ||
+		!user.nickname ||
+		!user.password ||
+		!user.rank     ||
+		!user.studiesCourseId
+	) {
+		return res.status(405).end('Invalid input');
+	}
+
+	const userId = await UserService.createUser(user);
+	const login = await LoginService.createLogin(userId);
+
+	res.status(201).json(login);
 });
 
 /**
