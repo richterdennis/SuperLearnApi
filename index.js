@@ -1,10 +1,15 @@
 // Config
-const API_PORT = process.env.API_PORT || 8002;
 
-const DB_HOST     = process.env.DB_HOST     || 'localhost';
-const DB_USER     = process.env.DB_USER     || 'root';
-const DB_PASSWORD = process.env.DB_PASSWORD || '';
-const DB_DATABASE = process.env.DB_DATABASE || 'superlearn';
+let config = {};
+if (require('fs').existsSync('config.json')) {
+	config = require('config.json');
+}
+
+const API_PORT    = process.env.API_PORT    || config.API_PORT    || 8002;
+const DB_HOST     = process.env.DB_HOST     || config.DB_HOST     || 'localhost';
+const DB_USER     = process.env.DB_USER     || config.DB_USER     || 'root';
+const DB_PASSWORD = process.env.DB_PASSWORD || config.DB_PASSWORD || '';
+const DB_DATABASE = process.env.DB_DATABASE || config.DB_DATABASE || 'superlearn';
 
 // node_modules
 global.express = require('express');
@@ -32,10 +37,10 @@ const VoteRouter          = require('./routers/VoteRouter');
 
 // Start sql connection
 global.db = mysql.createConnection({
-  host:     DB_HOST,
-  user:     DB_USER,
-  password: DB_PASSWORD,
-  database: DB_DATABASE
+	host:     DB_HOST,
+	user:     DB_USER,
+	password: DB_PASSWORD,
+	database: DB_DATABASE
 });
 
 // Make some often used db functions async
@@ -43,12 +48,12 @@ db.query = helper.toAsync(db, db.query);
 
 // connect to db
 db.connect((err) => {
-  if(err) {
-    console.error('[SQL] Error connecting: ' + err.stack);
-    throw err;
-  }
+	if(err) {
+		console.error('[SQL] Error connecting: ' + err.stack);
+		throw err;
+	}
 
-  console.info('[SQL] Connected as id ' + db.threadId);
+	console.info('[SQL] Connected as id ' + db.threadId);
 });
 
 // Create Api
@@ -56,9 +61,9 @@ const api = express();
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(bodyParser.json());
 api.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
 });
 
 // Init routers
@@ -171,5 +176,5 @@ api.use('/api', VoteRouter);
 
 // Start server
 api.listen(API_PORT, function() {
-  console.log(`Server is listening on port ${API_PORT}!`);
+	console.log(`Server is listening on port ${API_PORT}!`);
 });
