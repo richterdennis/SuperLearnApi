@@ -23,14 +23,9 @@ CREATE TABLE IF NOT EXISTS `app` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(32) NOT NULL,
   `text` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Struktur von Tabelle superlearn.app_origin_rel
-CREATE TABLE IF NOT EXISTS `app_origin_rel` (
-  `app_id` int(10) unsigned NOT NULL,
-  `origin` varchar(50) NOT NULL,
-  PRIMARY KEY (`app_id`,`origin`)
+  `valid` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Struktur von Tabelle superlearn.logins
