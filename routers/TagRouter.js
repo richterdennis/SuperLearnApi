@@ -1,3 +1,5 @@
+const TagService = require('../system/TagService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -19,7 +21,13 @@ const router = module.exports = exports = express.Router();
  * @response  {405}  Invalid input
  */
 router.post('/tag', AppKeyAuth, TokenAuth, function(req, res) {
-	// createTag
+	const tag = req.body;
+
+	if(!tag) return res.status(405).end("Invalid input");
+
+	TagService.createTag(tag).then((id) => {
+		res.status(201).json({id});
+	});
 });
 
 /**
