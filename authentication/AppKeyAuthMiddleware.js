@@ -1,3 +1,5 @@
+const AuthService = require('../system/AuthService');
+
 /**
  * Authenticates the app
  * Your APP needs to be authorized by an APP-Key
@@ -9,10 +11,11 @@
 module.exports = exports = function(req, res, next) {
 	const appKey = req.get('X-App-Key');
 
-	console.log('AppKey:', appKey);
-	console.log('Hostname:', req.hostname);
-	console.log('Ip:', req.ip);
-	console.log('Ips:', req.ips);
+	if(!appKey) return res.status(401).end('X-App-Key header not found');
 
-	next();
+	AuthService.isValidApp(appKey).then((isValid) => {
+		if(isValid) return next();
+
+		res.status(401).end('Invalid app key');
+	});
 }
