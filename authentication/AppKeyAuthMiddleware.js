@@ -8,14 +8,14 @@ const AuthService = require('../system/AuthService');
  *
  * @response  {401}  Invalid app key
  */
-module.exports = exports = function(req, res, next) {
+module.exports = exports = async function(req, res, next) {
 	const appKey = req.get('X-App-Key');
 
-	if(!appKey) return res.status(401).end('X-App-Key header not found');
+	if(!appKey)
+		return res.status(401).end('X-App-Key header not found');
 
-	AuthService.isValidApp(appKey).then((isValid) => {
-		if(isValid) return next();
+	if(await AuthService.isValidApp(appKey))
+		return next();
 
-		res.status(401).end('Invalid app key');
-	});
-}
+	res.status(401).end('Invalid app key');
+};
