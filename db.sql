@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(150) NOT NULL,
   `nickname` varchar(50) NOT NULL,
-  `password` varchar(150) NOT NULL,
+  `password` varchar(60) NOT NULL,
   `image` varchar(150) DEFAULT NULL,
   `score` int(11) NOT NULL DEFAULT '0',
   `rank_id` int(10) unsigned NOT NULL COMMENT '1:student, 2:admin, 3:prof, 4:lecturer',

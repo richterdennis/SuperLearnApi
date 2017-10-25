@@ -1,3 +1,5 @@
+const AuthService = require('./AuthService');
+
 /**
  * This creates a login for the given user id
  *
@@ -5,20 +7,25 @@
  * @return  {Object}          The login
  */
 exports.createLogin = async function(userId) {
-	// TODO: Generate a JWT
+	const tokenData = {
+		userId: userId,
+		exp: (Date.now() / 1000 | 0) + config.TOKEN_LIVE_TIME
+	}
+
+	const token = await AuthService.generateToken(tokenData);
 
 	const data = {
 		user_id: userId,
-		device_id: '',
-		token: '',
-		expires: 0
+		device_id: 'unknown',
+		token: token,
+		expires: tokenData.exp
 	}
 
 	const [err, res] = await db.query('INSERT INTO logins SET ?', data);
 	if(err) throw err;
 
 	return {
-		token: '',
-		expires: 0
+		token: token,
+		expires: tokenData.exp
 	};
 }

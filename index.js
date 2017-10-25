@@ -1,15 +1,18 @@
 // Config
-
-let config = {};
-if (require('fs').existsSync('./config.json')) {
-	config = require('./config.json');
+let cFile = {};
+if(require('fs').existsSync('./config.json')) {
+	cFile = require('./config.json');
 }
 
-const API_PORT    = process.env.API_PORT    || config.API_PORT    || 8002;
-const DB_HOST     = process.env.DB_HOST     || config.DB_HOST     || 'localhost';
-const DB_USER     = process.env.DB_USER     || config.DB_USER     || 'root';
-const DB_PASSWORD = process.env.DB_PASSWORD || config.DB_PASSWORD || '';
-const DB_DATABASE = process.env.DB_DATABASE || config.DB_DATABASE || 'superlearn';
+global.config = {
+	API_PORT:        process.env.API_PORT        || cFile.API_PORT        || 8002,
+	DB_HOST:         process.env.DB_HOST         || cFile.DB_HOST         || 'localhost',
+	DB_USER:         process.env.DB_USER         || cFile.DB_USER         || 'root',
+	DB_PASSWORD:     process.env.DB_PASSWORD     || cFile.DB_PASSWORD     || '',
+	DB_DATABASE:     process.env.DB_DATABASE     || cFile.DB_DATABASE     || 'superlearn',
+	TOKEN_LIVE_TIME: process.env.TOKEN_LIVE_TIME || cFile.TOKEN_LIVE_TIME || 60*60*24*3,
+	TOKEN_SIGN_KEY:  process.env.TOKEN_SIGN_KEY  || cFile.TOKEN_SIGN_KEY  || '6a7c1f6f4c54cf24edc9b3587e40708c',
+};
 
 // node_modules
 global.express = require('express');
@@ -38,10 +41,10 @@ const VoteRouter          = require('./routers/VoteRouter');
 
 // Start sql connection
 global.db = mysql.createConnection({
-	host:     DB_HOST,
-	user:     DB_USER,
-	password: DB_PASSWORD,
-	database: DB_DATABASE
+	host:     config.DB_HOST,
+	user:     config.DB_USER,
+	password: config.DB_PASSWORD,
+	database: config.DB_DATABASE
 });
 
 // Make some often used db functions async
@@ -176,6 +179,6 @@ api.use('/api', TagRouter);
 api.use('/api', VoteRouter);
 
 // Start server
-api.listen(API_PORT, function() {
-	console.log(`Server is listening on port ${API_PORT}!`);
+api.listen(config.API_PORT, function() {
+	console.log(`Server is listening on port ${config.API_PORT}!`);
 });
