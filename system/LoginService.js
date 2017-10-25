@@ -18,7 +18,7 @@ exports.createLogin = async function(userId) {
 		user_id: userId,
 		device_id: 'unknown',
 		token: token,
-		expires: tokenData.exp
+		expires: new Date(tokenData.exp + 1000)
 	}
 
 	const [err, res] = await db.query('INSERT INTO logins SET ?', data);

@@ -1,3 +1,5 @@
+const AuthService = require('../system/AuthService');
+
 /**
  * Authenticates the user
  * You needs to be authorized by a Token
@@ -6,10 +8,25 @@
  *
  * @response  {401}  Invalid app key
  */
-module.exports = exports = function(req, res, next) {
-  const token = req.get('X-User-Token');
+module.exports = exports = _(async function(req, res, next) {
+	const token = req.get('X-User-Token');
 
-  console.log('Token:', token);
+	if(!token)
+		return res.status(401).end('X-User-Token header not found');
+
+	const [valid, data] = await AuthService.getTokenData(token);
+
+	if(!valid)
+		return res.status(401).end('Invalid app key');
+
+	const isExpired = await AuthService.checkTokenExpired(data.userId, token);
+
+	if(isExpired)
+		return res.status(401).end('Invalid app key');
+
+	req.currentUser = {
+		id: data.userId
+	};
 
 	next();
-}
+});

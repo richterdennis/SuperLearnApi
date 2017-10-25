@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 jwt.sign = helper.toAsync(jwt, jwt.sign);
+jwt.verify = helper.toAsync(jwt, jwt.verify);
 
 /**
  * Checks if the given key is a valid app key
@@ -49,4 +50,35 @@ exports.generateToken = async function(payload) {
 	if(err) throw err;
 
 	return token;
+}
+
+/**
+ * Gets the data stored in the token
+ *
+ * @param   {String}  token  The token
+ * @return  {Array}          [isValid?, data]
+ */
+exports.getTokenData = async function(token) {
+	const [err, data] = await jwt.verify(token, config.TOKEN_SIGN_KEY);
+	return [!err, data];
+}
+
+/**
+ * Check if a token is expired and stored in the db
+ *
+ * @param   {Number}  userId  The user id
+ * @param   {String}  token   The token
+ * @return  {boolean}         isExpired?
+ */
+exports.checkTokenExpired = async function(userId, token) {
+	const query = 'SELECT token, expires FROM logins WHERE user_id = ? ORDER BY expires DESC LIMIT 1';
+	const [err, rows] = await db.query(query, [userId]);
+	if(err) throw err;
+
+	return (
+		!rows.length                       ||
+		rows[0].token !== token            ||
+		!(rows[0].expires instanceof Date) ||
+		rows[0].expires < Date.now()
+	);
 }
