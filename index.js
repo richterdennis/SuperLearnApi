@@ -18,6 +18,7 @@ const mysql = require('mysql');
 
 // import helper functions
 global.helper = require('./util/helper.js');
+global._ = helper.fromAsync;
 
 // import auth middlewares
 global.AppKeyAuth = require('./authentication/AppKeyAuthMiddleware');

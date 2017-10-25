@@ -20,7 +20,7 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {405}  Invalid input
  */
-router.post('/tag', AppKeyAuth, TokenAuth, async function(req, res) {
+router.post('/tag', AppKeyAuth, TokenAuth, _(async function(req, res) {
 	const tag = req.body;
 
 	if(!tag)
@@ -28,7 +28,7 @@ router.post('/tag', AppKeyAuth, TokenAuth, async function(req, res) {
 
 	const tagId = await TagService.createTag(tag);
 	res.status(201).json({id: tagId});
-});
+}));
 
 /**
  * Get all tags wich matches the given search query

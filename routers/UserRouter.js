@@ -27,7 +27,7 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {405}  Invalid input
  */
-router.post('/me', AppKeyAuth, async function(req, res) {
+router.post('/me', AppKeyAuth, _(async function(req, res) {
 	const user = req.body;
 
 	if(
@@ -45,7 +45,7 @@ router.post('/me', AppKeyAuth, async function(req, res) {
 	const login = await LoginService.createLogin(userId);
 
 	res.status(201).json(login);
-});
+}));
 
 /**
  * Gets my profile
