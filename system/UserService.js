@@ -1,3 +1,5 @@
+const AuthService = require('./AuthService');
+
 /**
  * Creates a user
  *
@@ -8,17 +10,18 @@ exports.createUser = async function(user) {
 	let data = {
 		email:    user.email,
 		nickname: user.nickname,
-		password: user.password,
 		rank_id:  user.rank
 	};
 
 	if(user.image)
 		data.image = user.image;
 
+	data.password = await AuthService.generateHash(user.password);
+
 	let [err, res] = await db.query('INSERT INTO user SET ?', data);
 	if(err) throw err;
 
-	const userId = res.insertedId;
+	const userId = res.insertId;
 
 	data = {
 		user_id: userId,
