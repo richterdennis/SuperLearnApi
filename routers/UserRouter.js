@@ -126,9 +126,28 @@ router.delete('/me', AppKeyAuth, TokenAuth, function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid password
  */
-router.post('/me/login', AppKeyAuth, function(req, res) {
-	// loginUser
-});
+router.post('/me/login', AppKeyAuth, _(async function(req, res) {
+	const loginData = req.body;
+
+	if(
+		!loginData          ||
+		!loginData.email    ||
+		!loginData.password ||
+		!loginData.deviceId
+	) {
+		return res.status(405).end('Invalid input');
+	}
+
+	const [valid, login] = await LoginService.verifyLoginData(loginData)
+	if(!valid) {
+		if(login === 404)
+			return res.status(404).end('Object not found');
+		else
+			return res.status(405).end('Invalid password');
+	}
+
+	res.status(201).json(login);
+}));
 
 /**
  * Reset my password
