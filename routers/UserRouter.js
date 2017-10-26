@@ -69,9 +69,13 @@ router.post('/me', AppKeyAuth, _(async function(req, res) {
  *
  * @response  {404}  Object not found
  */
-router.get('/me', AppKeyAuth, TokenAuth, function(req, res) {
-	// getUser
-});
+router.get('/me', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const user = await UserService.getUser(req.currentUser.id);
+	if(!user)
+		return res.status(404).end('Object not found');
+
+	res.json(user);
+}));
 
 /**
  * Updates my profile

@@ -33,3 +33,31 @@ exports.createUser = async function(user) {
 
 	return userId;
 }
+
+exports.getUser = async function(userId) {
+	let [err, res] = await db.query('SELECT id, email, nickname, image, score, confirmed, created, rank_id as rank FROM user WHERE id = ?', userId);
+	if(err) throw err;
+
+	if(!res.length)
+		return null;
+
+	const user = res[0];
+
+	/**
+	 * Rank
+	 *
+	 * 1 -> student
+	 * 2 -> admin
+	 * 3 -> prof
+	 * 4 -> lecturer
+	 *
+	 *
+	 * Role
+	 *
+	 * 1 -> User,
+	 * 2 -> Manager
+	 */
+	user.role = user.rank > 1 || user.score > 9999 ? 2 : 1;
+
+	return user;
+}
