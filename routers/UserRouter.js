@@ -101,7 +101,7 @@ router.put('/me', AppKeyAuth, TokenAuth, _(async function(req, res) {
 		changes++;
 	}
 
-	if(req.body.image) {
+	if('image' in req.body) {
 		update.image = req.body.image;
 		changes++;
 	}
@@ -256,9 +256,18 @@ router.put('/confirm/:token', AppKeyAuth, function(req, res) {
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.get('/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
-	// getUser
-});
+router.get('/user/:userId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const userId = parseInt(req.params.userId);
+
+	if(!userId || userId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	const user = await UserService.getUser(userId);
+	if(!user)
+		return res.status(404).end('Object not found');
+
+	res.json(user);
+}));
 
 /**
  * Get best 10 user for a wall of fame
