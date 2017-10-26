@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `app` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(32) NOT NULL,
   `text` varchar(50) NOT NULL,
-  `valid` tinyint(1) NOT NULL DEFAULT '0',
+  `valid` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

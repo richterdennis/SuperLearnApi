@@ -1,3 +1,5 @@
+const StudiesCourseService = require('../system/StudiesCourseService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -15,9 +17,9 @@ const router = module.exports = exports = express.Router();
  *      }
  *    ]
  */
-router.get('/studiesCourses', AppKeyAuth, function(req, res) {
-	// getStudiesCourses
-});
+router.get('/studiesCourses', AppKeyAuth, _(async function(req, res) {
+	res.json(await StudiesCourseService.getStudiesCourses());
+}));
 
 /**
  * Creates a request for a new course of studies
