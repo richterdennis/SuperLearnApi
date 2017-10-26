@@ -29,3 +29,15 @@ exports.fromAsync = function(fn) {
 		fn(...arguments).catch(console.error);
 	}
 }
+
+/**
+ * Wrapps express async functions to use as a none async one
+ *
+ * @param   {Function}  fn  The async function
+ * @return  {Function}      The sync function
+ */
+exports.expressAsyncWrapper = function(fn) {
+	return function(req, res, next) {
+		fn(req, res, next).catch(next);
+	}
+}
