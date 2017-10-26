@@ -1,3 +1,5 @@
+const ReportService = require('../system/ReportService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -15,9 +17,21 @@ const router = module.exports = exports = express.Router();
  * @response  {201}  Object successfully created
  * @response  {405}  Invalid input
  */
-router.post('/report', AppKeyAuth, TokenAuth, function(req, res) {
-	// createReport
-});
+router.post('/report', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const report = req.body;
+
+	if(
+		!report              ||
+		!report.reportTypeId ||
+		!report.text         ||
+		!report.questionId
+	) {
+		return res.status(405).end('Invalid input');
+	}
+
+	await ReportService.createReport(report);
+	res.status(201).end('Object successfully created');
+}));
 
 /**
  * Set an existing report to processed
