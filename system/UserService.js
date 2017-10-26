@@ -34,8 +34,14 @@ exports.createUser = async function(user) {
 	return userId;
 }
 
+/**
+ * Gets a user with the given user id
+ *
+ * @param   {Number}  userId  The user id
+ * @return  {Object}          The user
+ */
 exports.getUser = async function(userId) {
-	let [err, res] = await db.query('SELECT id, email, nickname, image, score, confirmed, created, rank_id as rank FROM user WHERE id = ?', userId);
+	const [err, res] = await db.query('SELECT id, email, nickname, image, score, confirmed, created, rank_id as rank FROM user WHERE id = ?', userId);
 	if(err) throw err;
 
 	if(!res.length)
@@ -60,4 +66,18 @@ exports.getUser = async function(userId) {
 	user.role = user.rank > 1 || user.score > 9999 ? 2 : 1;
 
 	return user;
+}
+
+/**
+ * Updates a user
+ *
+ * @param   {Number}  userId  The user id
+ * @param   {Object}  update  The update data
+ * @return  {boolean}         Success?
+ */
+exports.updateUser = async function(userId, update) {
+	const [err, res] = await db.query('UPDATE user SET ? WHERE id = ?', [update, userId]);
+	if(err) throw err;
+
+	return !!res.changedRows;
 }

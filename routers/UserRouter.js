@@ -92,9 +92,29 @@ router.get('/me', AppKeyAuth, TokenAuth, _(async function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/me', AppKeyAuth, TokenAuth, function(req, res) {
-	// updateUser
-});
+router.put('/me', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	let changes = 0;
+	const update = {};
+
+	if(req.body.nickname) {
+		update.nickname = req.body.nickname;
+		changes++;
+	}
+
+	if(req.body.image) {
+		update.image = req.body.image;
+		changes++;
+	}
+
+	if(!changes)
+		return res.status(405).end('Invalid input');
+
+	const success = await UserService.updateUser(req.currentUser.id, update);
+	if(!success)
+		return res.status(404).end('Object not found');
+
+	res.end('Object successfully updated');
+}));
 
 /**
  * Deletes my user profile
