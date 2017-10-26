@@ -81,3 +81,20 @@ exports.updateUser = async function(userId, update) {
 
 	return !!res.changedRows;
 }
+
+/**
+ * Gets the best 10 user by score
+ *
+ * @return  {Array}  The user
+ */
+exports.getBest10User = async function() {
+	const [err, res] = await db.query('SELECT id, email, nickname, image, score, confirmed, created, rank_id as rank FROM user ORDER BY score DESC LIMIT 10');
+	if(err) throw err;
+
+	const user = res;
+	user.forEach(user => {
+		user.role = user.rank > 1 || user.score > 9999 ? 2 : 1;
+	});
+
+	return user;
+}

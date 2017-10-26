@@ -291,6 +291,6 @@ router.get('/user/:userId', AppKeyAuth, TokenAuth, _(async function(req, res) {
  *      }
  *    ]
  */
-router.get('/user', AppKeyAuth, TokenAuth, function(req, res) {
-	// getUsers
-});
+router.get('/user', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	res.json(await UserService.getBest10User());
+}));
