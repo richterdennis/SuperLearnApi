@@ -90,9 +90,9 @@ router.put('/report/:reportId/processed', AppKeyAuth, TokenAuth, _(async functio
  *      }
  *    ]
  *
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  */
-router.get('/reports', AppKeyAuth, TokenAuth, function(req, res) {
+router.get('/reports', AppKeyAuth, TokenAuth, _(async function(req, res) {
 	const user = await UserService.getUser(req.currentUser.id);
 	if(!user)
 		return res.status(404).end('User not found');
@@ -100,7 +100,6 @@ router.get('/reports', AppKeyAuth, TokenAuth, function(req, res) {
 	if(user.role !== 2)
 		return res.status(403).end('Forbidden');
 
-
-
-	// getReports
-});
+	const reports = await ReportService.getUnprocessedReports();
+	res.json(reports);
+}));

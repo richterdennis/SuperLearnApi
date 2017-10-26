@@ -27,3 +27,15 @@ exports.updateReport = async function(reportId, reportData) {
 
 	return !!res.changedRows;
 }
+
+/**
+ * Gets all unprocessed reports
+ *
+ * @return  {Array}  The report list
+ */
+exports.getUnprocessedReports = async function() {
+	const [err, res] = await db.query('SELECT id, report_type_id, text, question_id, user_id, created FROM reports WHERE processed = 0');
+	if(err) throw err;
+
+	return res;
+}
