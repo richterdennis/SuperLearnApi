@@ -56,7 +56,7 @@ router.post('/question', AppKeyAuth, TokenAuth, function(req, res) {
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
@@ -74,7 +74,7 @@ router.put('/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
  *
  * @response  {204}  Object successfully deleted
  * @response  {400}  Invalid ID supplied
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  * @response  {404}  Object not found
  */
 router.delete('/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
@@ -218,7 +218,7 @@ router.get('/module/:moduleId/questions/random', AppKeyAuth, function(req, res) 
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
@@ -248,7 +248,7 @@ router.put('/answer/:answerId', AppKeyAuth, TokenAuth, function(req, res) {
  *    }
  *
  * @response  {400}  Invalid ID supplied
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  * @response  {405}  Invalid input
  */
 router.post('/solution', AppKeyAuth, TokenAuth, function(req, res) {
@@ -271,7 +271,7 @@ router.post('/solution', AppKeyAuth, TokenAuth, function(req, res) {
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */

@@ -1,3 +1,6 @@
+const ReportService = require('../system/ReportService');
+const UserService = require('../system/UserService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -15,9 +18,21 @@ const router = module.exports = exports = express.Router();
  * @response  {201}  Object successfully created
  * @response  {405}  Invalid input
  */
-router.post('/report', AppKeyAuth, TokenAuth, function(req, res) {
-	// createReport
-});
+router.post('/report', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const report = req.body;
+
+	if(
+		!report              ||
+		!report.reportTypeId ||
+		!report.text         ||
+		!report.questionId
+	) {
+		return res.status(405).end('Invalid input');
+	}
+
+	await ReportService.createReport(report);
+	res.status(201).end('Object successfully created');
+}));
 
 /**
  * Set an existing report to processed
@@ -29,12 +44,31 @@ router.post('/report', AppKeyAuth, TokenAuth, function(req, res) {
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  * @response  {404}  Object not found
  */
-router.put('/report/:reportId/processed', AppKeyAuth, TokenAuth, function(req, res) {
-	// updateReport
-});
+router.put('/report/:reportId/processed', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const reportId = parseInt(req.params.reportId);
+
+	if(!reportId || reportId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	const user = await UserService.getUser(req.currentUser.id);
+	if(!user)
+		return res.status(404).end('User not found');
+
+	if(user.role !== 2)
+		return res.status(403).end('Forbidden');
+
+	const success = await ReportService.updateReport(reportId, {
+		processed: true
+	});
+
+	if(!success)
+		return res.status(404).end('Object not found');
+
+	res.end('Object successfully updated');
+}));
 
 /**
  * Get all unprocessed reports
@@ -56,8 +90,16 @@ router.put('/report/:reportId/processed', AppKeyAuth, TokenAuth, function(req, r
  *      }
  *    ]
  *
- * @response  {403}  Forbitten
+ * @response  {403}  Forbidden
  */
-router.get('/reports', AppKeyAuth, TokenAuth, function(req, res) {
-	// getReports
-});
+router.get('/reports', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const user = await UserService.getUser(req.currentUser.id);
+	if(!user)
+		return res.status(404).end('User not found');
+
+	if(user.role !== 2)
+		return res.status(403).end('Forbidden');
+
+	const reports = await ReportService.getUnprocessedReports();
+	res.json(reports);
+}));

@@ -121,11 +121,11 @@ api.use('/api', ModuleRouter);
  * question
  * A question can be of three types (boolean, exact or one of four)
  *
- * POST   /question               Creates a new question
+ * POST   /question              Creates a new question
  * PUT    /question/:questionId  Updates an existing question
  * DELETE /question/:questionId  Deletes an existing question but not for the creator
- * GET    /questions              Get all my questions
- * GET    /questions/random       Get a bunch of random questions
+ * GET    /questions             Get all my questions
+ * GET    /questions/random      Get a bunch of random questions
  * PUT    /answer/:answerId      Updates an existing answer
  * PUT    /solution/:solutionId  Updates an existing solution
  */
@@ -135,9 +135,9 @@ api.use('/api', QuestionRouter);
  * report
  * You can report a question (offensive, spelling ...)
  *
- * POST /report                       Creates a new report
+ * POST /report                      Creates a new report
  * PUT  /report/:reportId/processed  Set an existing report to processed
- * GET  /reports                      Get all unprocessed reports
+ * GET  /reports                     Get all unprocessed reports
  */
 api.use('/api', ReportRouter);
 
