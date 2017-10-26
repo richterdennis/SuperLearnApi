@@ -6,12 +6,13 @@ const router = module.exports = exports = express.Router();
  * @security  AppKeyAuth, TokenAuth
  *
  * @path*  {integer}  moduleId  ID of module to update
+ * @path*  {integer}  passed    passed or unpassed
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.put('/module/:moduleId/passed', AppKeyAuth, TokenAuth, function(req, res) {
+router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, function(req, res) {
 	// updateModule
 	res.status(200).end();
 });
@@ -27,7 +28,7 @@ router.put('/module/:moduleId/passed', AppKeyAuth, TokenAuth, function(req, res)
  *    [
  *      {
  *        "id": 1337,
- *        "text": "Grundalgen der Informatik",
+ *        "text": "Grundlagen der Informatik",
  *        "passed": false,
  *        "lastRequested": 0,
  *        "semester": 1,
