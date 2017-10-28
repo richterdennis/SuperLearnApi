@@ -1,3 +1,6 @@
+const UserService = require('../system/UserService');
+const ModuleService = require('../system/ModuleService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -12,10 +15,26 @@ const router = module.exports = exports = express.Router();
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, function(req, res) {
-	// updateModule
+router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const moduleId = parseInt(req.params.moduleId);
+
+	if (!moduleId || moduleId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	const passed = parseInt(req.params.passed);
+	const user = await UserService.getUser(req.currentUser.id);
+
+	if (!user)
+		return res.status(404).end('User not found');
+	
+	await ModuleService.updateModule({
+		module_id: moduleId,
+		user_id: user,
+		passed: passed
+	});
+
 	res.status(200).end();
-});
+}));
 
 /**
  * Get all modules
