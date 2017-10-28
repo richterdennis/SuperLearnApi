@@ -22,7 +22,7 @@ router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(
 		return res.status(400).end('Invalid ID supplied');
 
 	const passed = parseInt(req.params.passed);
-	const user = await UserService.getUser(req.currentUser.id);
+	const user = req.currentUser.id;
 
 	if (!user)
 		return res.status(404).end('User not found');
