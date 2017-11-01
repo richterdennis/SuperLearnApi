@@ -1,3 +1,5 @@
+const QuestionService = require('../system/QuestionService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -16,13 +18,11 @@ const router = module.exports = exports = express.Router();
  *      ],
  *      "answers": [                  | required
  *        {                           | - one on type 1:boolean and 3:exact
- *          "id": 1337,               | - four on type 2:four
- *          "correct": true,          |
+ *          "correct": true,          | - four on type 2:four
  *          "text": null              | text only null on type 1:boolean
  *        }                          <|>
  *      ],
  *      "solution": {
- *        "id": 0,
  *        "text": "string",
  *        "image": "string"
  *      }
@@ -36,9 +36,27 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {405}  Invalid input
  */
-router.post('/question', AppKeyAuth, TokenAuth, function(req, res) {
-	// createQuestion
-});
+router.post('/question', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const question = req.body;
+
+	if(
+		!question              ||
+		!question.text         ||
+		!question.questionType ||
+		!question.moduleId     ||
+		!question.tags    || !question.tags.length
+		!question.answers || !question.answers.length
+	)
+		return res.status(405).end('Invalid input');
+
+	const questionId = await QuestionService.createQuestion(question);
+	if(!questionId)
+		return res.status(405).end('Invalid input');
+
+	res.status(201).json({
+		id: questionId
+	});
+}));
 
 /**
  * Updates an existing question
