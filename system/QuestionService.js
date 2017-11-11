@@ -1,4 +1,4 @@
-exports.createQuestion = async function(questionData) {
+exports.createQuestion = async function(userId, questionData) {
 	const tags = await checkTagsArray(questionData.tags);
 	if(!tags || !tags.length)
 		return false;
@@ -11,14 +11,55 @@ exports.createQuestion = async function(questionData) {
 	if(solution === false)
 		return false;
 
+	// insert question
+	let data = {
+		text:             questionData.text,
+		question_type_id: questionData.questionType,
+		module_id:        questionData.moduleId,
+		user_id:          userId
+	};
 
+	if(questionData.image)
+		data.image = questionData.image;
+
+	let [err, res] = await db.query('INSERT INTO questions SET ?', data);
+	if(err) throw err;
+
+	const questionId = res.insertId;
+
+	// insert tags
+	let values = tags.map(tag => [questionId, tag]);
+
+	[err] = await db.query('INSERT INTO questions_question_tags_rel (question_id, question_tag_id) VALUES ?', [values]);
+	if(err) throw err;
+
+	// insert answers
+	values = answers.map(answer => [answer.correct, answer.text, questionId]);
+
+	[err] = await db.query('INSERT INTO answers (correct, text, question_id) VALUES ?', [values]);
+	if(err) throw err;
+
+	// insert solution
+	if(!solution) return questionId;
+
+	data = {
+		text: solution.text
+	};
+
+	if(solution.image)
+		data.image = solution.image;
+
+	[err] = await db.query('INSERT INTO solutions SET ?', data);
+	if(err) throw err;
+
+	return questionId;
 }
 
 async function checkTagsArray(tags) {
 	if(!(tags instanceof Array))
 		return false;
 
-	const [err, rows] = await db.query('SELECT id FROM tags WHERE id IN ?', [tags]);
+	const [err, rows] = await db.query('SELECT id FROM question_tags WHERE id IN (?)', [tags]);
 	if(err) throw err;
 
 	return rows.map(row => row.id);

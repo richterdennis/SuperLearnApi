@@ -44,12 +44,18 @@ router.post('/question', AppKeyAuth, TokenAuth, _(async function(req, res) {
 		!question.text         ||
 		!question.questionType ||
 		!question.moduleId     ||
-		!question.tags    || !question.tags.length
-		!question.answers || !question.answers.length
+
+		!question.tags         ||
+		!question.tags.length  ||
+
+		!question.answers      ||
+		!question.answers.length
 	)
 		return res.status(405).end('Invalid input');
 
-	const questionId = await QuestionService.createQuestion(question);
+	const userId = req.currentUser.id;
+
+	const questionId = await QuestionService.createQuestion(userId, question);
 	if(!questionId)
 		return res.status(405).end('Invalid input');
 
