@@ -1,4 +1,5 @@
 const QuestionService = require('../system/QuestionService');
+const UserService = require('../system/UserService');
 
 const router = module.exports = exports = express.Router();
 
@@ -132,9 +133,25 @@ router.put('/question/:questionId', AppKeyAuth, TokenAuth, _(async function(req,
  * @response  {403}  Forbidden
  * @response  {404}  Object not found
  */
-router.delete('/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
-	// deleteQuestion
-});
+router.delete('/question/:questionId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const questionId = parseInt(req.params.questionId);
+
+	if(!questionId || questionId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	const currentUser = await UserService.getUser(req.currentUser.id);
+	if(!currentUser)
+		return res.status(404).end('User not found');
+
+	if(currentUser.role !== 2)
+		return res.status(403).end('Forbidden');
+
+	const success = await QuestionService.deleteQuestion(questionId);
+	if(!success)
+		return res.status(404).end('Object not found');
+
+	res.status(204).end('Object successfully deleted');
+}));
 
 /**
  * Get all my questions

@@ -76,6 +76,13 @@ exports.updateQuestion = async function(userId, questionId, data) {
 	return 200;
 }
 
+exports.deleteQuestion = async function(questionId) {
+	let [err, res] = await db.query('UPDATE questions SET deleted = 1 WHERE id = ?', [questionId]);
+	if(err) throw err;
+
+	return !!res.changedRows;
+}
+
 async function checkTagsArray(tags) {
 	if(!(tags instanceof Array))
 		return false;
