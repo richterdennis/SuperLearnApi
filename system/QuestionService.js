@@ -1,3 +1,5 @@
+const UserService = require('./UserService');
+
 exports.createQuestion = async function(userId, questionData) {
 	const tags = await checkTagsArray(questionData.tags);
 	if(!tags || !tags.length)
@@ -53,6 +55,25 @@ exports.createQuestion = async function(userId, questionData) {
 	if(err) throw err;
 
 	return questionId;
+}
+
+exports.updateQuestion = async function(userId, questionId, data) {
+	let [err, rows] = await db.query('SELECT user_id FROM questions WHERE id = ?', [userId]);
+	if(err) throw err;
+
+	if(rows.length < 1)
+		return 404;
+
+	if(rows[0].user_id !== userId) {
+		const user = await UserService.getUser(userId);
+		if(user.role !== 2)
+			return 403;
+	}
+
+	[err] = await db.query('UPDATE questions SET ? WHERE id = ?', [data, questionId]);
+	if(err) throw err;
+
+	return 200;
 }
 
 async function checkTagsArray(tags) {
