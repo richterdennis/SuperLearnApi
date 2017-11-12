@@ -77,10 +77,52 @@ exports.updateQuestion = async function(userId, questionId, data) {
 }
 
 exports.deleteQuestion = async function(questionId) {
-	let [err, res] = await db.query('UPDATE questions SET deleted = 1 WHERE id = ?', [questionId]);
+	const [err, res] = await db.query('UPDATE questions SET deleted = 1 WHERE id = ?', [questionId]);
 	if(err) throw err;
 
 	return !!res.changedRows;
+}
+
+exports.getQuestionsByUser = async function(userId) {
+	const [err, res] = await db.query('SELECT * FROM questions WHERE user_id = ?', [userId]);
+	if(err) throw err;
+
+	const questions = [];
+	for(let i = 0; i < res.length; i++) {
+		const row = res[i];
+		questions.push({
+			id: row.id,
+			text: row.text,
+			image: row.image,
+			questionType: row.question_type_id,
+			moduleId: row.module_id,
+			score: row.score,
+			// voted: await VoteService.getQuestionVoteByUser(userId, row.id),
+			userId: row.user_id,
+			created: row.created,
+			answers: await exports.getAnswers(row.id),
+			solution: await exports.getSolution(row.id)
+		});
+	}
+
+	return questions;
+}
+
+exports.getAnswers = async function(questionId) {
+	const [err, res] = await db.query('SELECT id, correct, text FROM answers WHERE question_id = ?', [questionId]);
+	if(err) throw err;
+
+	return res;
+}
+
+exports.getSolution = async function(questionId) {
+	const [err, res] = await db.query('SELECT id, text, image FROM solutions WHERE question_id = ?', [questionId]);
+	if(err) throw err;
+
+	if(!res.length)
+		return null;
+
+	return res[0];
 }
 
 async function checkTagsArray(tags) {

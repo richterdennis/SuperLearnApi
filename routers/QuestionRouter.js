@@ -187,9 +187,11 @@ router.delete('/question/:questionId', AppKeyAuth, TokenAuth, _(async function(r
  *      }
  *    ]
  */
-router.get('/questions', AppKeyAuth, TokenAuth, function(req, res) {
-	// getMyQuestions
-});
+router.get('/questions', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const userId = req.currentUser.id;
+
+	res.json(await QuestionService.getQuestionsByUser(userId));
+}));
 
 /**
  * Get a bunch of random questions
