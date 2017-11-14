@@ -58,7 +58,7 @@ exports.createQuestion = async function(userId, questionData) {
 }
 
 exports.updateQuestion = async function(userId, questionId, data) {
-	let [err, rows] = await db.query('SELECT user_id FROM questions WHERE id = ?', [userId]);
+	let [err, rows] = await db.query('SELECT user_id FROM questions WHERE id = ?', [questionId]);
 	if(err) throw err;
 
 	if(rows.length < 1)
@@ -123,6 +123,32 @@ exports.getSolution = async function(questionId) {
 		return null;
 
 	return res[0];
+}
+
+exports.updateAnswer = async function(userId, answerId, data) {
+	const query = `
+		SELECT user_id
+		FROM questions q
+			JOIN answers a ON q.id = a.question_id
+		WHERE a.id = ?
+	`;
+
+	let [err, rows] = await db.query(query, [answerId]);
+	if(err) throw err;
+
+	if(rows.length < 1)
+		return 404;
+
+	if(rows[0].user_id !== userId) {
+		const user = await UserService.getUser(userId);
+		if(user.role !== 2)
+			return 403;
+	}
+
+	[err] = await db.query('UPDATE answers SET ? WHERE id = ?', [data, answerId]);
+	if(err) throw err;
+
+	return 200;
 }
 
 async function checkTagsArray(tags) {

@@ -296,9 +296,40 @@ router.get('/module/:moduleId/questions/random', AppKeyAuth, function(req, res) 
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/answer/:answerId', AppKeyAuth, TokenAuth, function(req, res) {
-	// updateAnswer
-});
+router.put('/answer/:answerId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const answerId = parseInt(req.params.answerId);
+
+	if(!answerId || answerId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	let changes = 0;
+	const update = {};
+
+	if('correct' in req.body) {
+		update.correct = req.body.correct;
+		changes++;
+	}
+
+	if(req.body.text) {
+		update.text = req.body.text;
+		changes++;
+	}
+
+	if(!changes)
+		return res.status(405).end('Invalid input');
+
+	const userId = req.currentUser.id;
+
+	const status = await QuestionService.updateAnswer(userId, answerId, update);
+
+	switch(status) {
+		case 200: res.end('Object successfully updated');  break;
+		case 403: res.status(403).end('Forbidden');        break;
+		case 404: res.status(404).end('Object not found'); break;
+		default:
+			res.sendStatus(status);
+	}
+}));
 
 /**
  * Creates a solution
