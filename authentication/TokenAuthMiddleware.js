@@ -6,7 +6,7 @@ const AuthService = require('../system/AuthService');
  *
  * @header*  {string}  X-User-Token  The user token
  *
- * @response  {401}  Invalid app key
+ * @response  {401}  Invalid user token
  */
 module.exports = exports = _(async function(req, res, next) {
 	const token = req.get('X-User-Token');
@@ -17,12 +17,12 @@ module.exports = exports = _(async function(req, res, next) {
 	const [valid, data] = await AuthService.getTokenData(token);
 
 	if(!valid)
-		return res.status(401).end('Invalid app key');
+		return res.status(401).end('Invalid user token');
 
 	const isExpired = await AuthService.checkTokenExpired(data.userId, token);
 
 	if(isExpired)
-		return res.status(401).end('Invalid app key');
+		return res.status(401).end('Invalid user token');
 
 	req.currentUser = {
 		id: data.userId

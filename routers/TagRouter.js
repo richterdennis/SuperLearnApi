@@ -31,7 +31,7 @@ router.post('/tag', AppKeyAuth, TokenAuth, _(async function(req, res) {
 }));
 
 /**
- * Get all tags wich matches the given search query
+ * Get all tags which matches the given search query
  * Returns an tag array of all tags
  *
  * @security  AppKeyAuth, TokenAuth
