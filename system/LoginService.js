@@ -49,3 +49,32 @@ exports.verifyLoginData = async function(loginData) {
 	const login = await exports.createLogin(res[0].id, loginData.deviceId);
 	return [true, login];
 }
+
+/**
+ * This updates a login for the given user id
+ *
+ * @param   {Number}  userId    The user id
+ * @param   {String}  oldToken  The old token
+ * @return  {Object}            The login
+ */
+exports.updateLogin = async function(userId, oldToken) {
+	const tokenData = {
+		userId: userId,
+		exp: (Date.now() / 1000 | 0) + config.TOKEN_LIVE_TIME
+	}
+
+	const token = await AuthService.generateToken(tokenData);
+
+	const data = {
+		token: token,
+		expires: new Date(tokenData.exp * 1000)
+	}
+
+	const [err, res] = await db.query('UPDATE logins SET ? WHERE user_id = ? AND token = ?', [data, userId, oldToken]);
+	if(err) throw err;
+
+	return {
+		token: token,
+		expires: tokenData.exp
+	};
+}
