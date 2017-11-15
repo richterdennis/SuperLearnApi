@@ -1,5 +1,12 @@
 const UserService = require('./UserService');
 
+/**
+ * Creates a question
+ *
+ * @param   {Number}  userId        The creator
+ * @param   {Object}  questionData  The question data
+ * @return  {Number|false}          The new question id or false on fail
+ */
 exports.createQuestion = async function(userId, questionData) {
 	const tags = await checkTagsArray(questionData.tags);
 	if(!tags || !tags.length)
@@ -57,6 +64,14 @@ exports.createQuestion = async function(userId, questionData) {
 	return questionId;
 }
 
+/**
+ * Updates a question
+ *
+ * @param   {Number}  userId      The changer
+ * @param   {Number}  questionId  The question id
+ * @param   {Object}  data        The question data to change
+ * @return  {Number}              The status of the success
+ */
 exports.updateQuestion = async function(userId, questionId, data) {
 	let [err, rows] = await db.query('SELECT user_id FROM questions WHERE id = ?', [questionId]);
 	if(err) throw err;
@@ -76,6 +91,12 @@ exports.updateQuestion = async function(userId, questionId, data) {
 	return 200;
 }
 
+/**
+ * Sets the delete flag of a question
+ *
+ * @param   {Number}  questionId  The question to delete
+ * @return  {boolean}             Success?
+ */
 exports.deleteQuestion = async function(questionId) {
 	const [err, res] = await db.query('UPDATE questions SET deleted = 1 WHERE id = ?', [questionId]);
 	if(err) throw err;
@@ -83,6 +104,12 @@ exports.deleteQuestion = async function(questionId) {
 	return !!res.changedRows;
 }
 
+/**
+ * Gets all the questions which creator is the given user
+ *
+ * @param   {Number}  userId  The question creator
+ * @return  {Array}           The question array
+ */
 exports.getQuestionsByUser = async function(userId) {
 	const [err, res] = await db.query('SELECT * FROM questions WHERE user_id = ?', [userId]);
 	if(err) throw err;
@@ -97,7 +124,7 @@ exports.getQuestionsByUser = async function(userId) {
 			questionType: row.question_type_id,
 			moduleId: row.module_id,
 			score: row.score,
-			// voted: await VoteService.getQuestionVoteByUser(userId, row.id),
+			// TODO: voted: await VoteService.getQuestionVoteByUser(userId, row.id),
 			userId: row.user_id,
 			created: row.created,
 			answers: await exports.getAnswers(row.id),
@@ -108,6 +135,12 @@ exports.getQuestionsByUser = async function(userId) {
 	return questions;
 }
 
+/**
+ * Gets the answers of a specific question
+ *
+ * @param   {Number}  questionId  The question id
+ * @return  {Array}               The answers
+ */
 exports.getAnswers = async function(questionId) {
 	const [err, res] = await db.query('SELECT id, correct, text FROM answers WHERE question_id = ?', [questionId]);
 	if(err) throw err;
@@ -115,6 +148,12 @@ exports.getAnswers = async function(questionId) {
 	return res;
 }
 
+/**
+ * Gets the solution of a specific question
+ *
+ * @param   {Number}  questionId  The question id
+ * @return  {Object}              The solution
+ */
 exports.getSolution = async function(questionId) {
 	const [err, res] = await db.query('SELECT id, text, image FROM solutions WHERE question_id = ?', [questionId]);
 	if(err) throw err;
@@ -125,6 +164,14 @@ exports.getSolution = async function(questionId) {
 	return res[0];
 }
 
+/**
+ * Updates an answer
+ *
+ * @param   {Number}  userId    The changer id
+ * @param   {Number}  answerId  The answer id to change
+ * @param   {Object}  data      The change data
+ * @return  {Number}            The status of success
+ */
 exports.updateAnswer = async function(userId, answerId, data) {
 	const query = `
 		SELECT user_id
@@ -151,6 +198,13 @@ exports.updateAnswer = async function(userId, answerId, data) {
 	return 200;
 }
 
+/**
+ * Creates a solution
+ *
+ * @param   {Number}  userId    The creator user id
+ * @param   {Object}  solution  The solution to create
+ * @return  {Array}             [status, insertId]
+ */
 exports.createSolution = async function(userId, solution) {
 	let [err, res] = await db.query('SELECT user_id FROM questions WHERE id = ?', [solution.questionId]);
 	if(err) throw err;
@@ -182,6 +236,14 @@ exports.createSolution = async function(userId, solution) {
 	}];
 }
 
+/**
+ * Updates a solution
+ *
+ * @param   {Number}  userId      The changer
+ * @param   {Number}  solutionId  The solution id
+ * @param   {Object}  data        The new solution data
+ * @return  {Number}              The status of success
+ */
 exports.updateSolution = async function(userId, solutionId, data) {
 	const query = `
 		SELECT user_id
@@ -208,6 +270,13 @@ exports.updateSolution = async function(userId, solutionId, data) {
 	return 200;
 }
 
+/**
+ * Private check function used by create question
+ * This checks the tags array
+ *
+ * @param   {Array}  tags  The tags array to check
+ * @return  {Array}        Array of existing tags
+ */
 async function checkTagsArray(tags) {
 	if(!(tags instanceof Array))
 		return false;
@@ -218,6 +287,14 @@ async function checkTagsArray(tags) {
 	return rows.map(row => row.id);
 }
 
+/**
+ * Private check function used by create question
+ * This checks the answers array
+ *
+ * @param   {Number}  questionType  The question type (1:boolean, 2:four, 3:exact)
+ * @param   {Array}   answers       The answers array to check
+ * @return  {Array|false}           The checked answers array or false on fail
+ */
 function checkAnswersArray(questionType, answers) {
 	switch(questionType) {
 		case 1:
@@ -242,6 +319,14 @@ function checkAnswersArray(questionType, answers) {
 	return answers;
 }
 
+/**
+ * Private check function used by create question
+ * This checks a answer
+ *
+ * @param   {Number}  questionType  The question type
+ * @param   {Object}  answer        The answer
+ * @return  {Object|false}          The checked answer of false on fail
+ */
 function checkAnswer(questionType, answer) {
 	if(questionType !== 1 && !answer.text)
 		return false;
@@ -252,6 +337,13 @@ function checkAnswer(questionType, answer) {
 	}
 }
 
+/**
+ * Private check function used by create question
+ * This checks the solution
+ *
+ * @param   {Object}  solution  The solution to check
+ * @return  {Object|false}      The checked solution or false on fail
+ */
 function checkSolution(solution) {
 	if(!solution)
 		return null;
