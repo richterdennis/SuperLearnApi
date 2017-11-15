@@ -182,6 +182,32 @@ exports.createSolution = async function(userId, solution) {
 	}];
 }
 
+exports.updateSolution = async function(userId, solutionId, data) {
+	const query = `
+		SELECT user_id
+		FROM questions q
+			JOIN solutions s ON q.id = s.question_id
+		WHERE s.id = ?
+	`;
+
+	let [err, rows] = await db.query(query, [solutionId]);
+	if(err) throw err;
+
+	if(rows.length < 1)
+		return 404;
+
+	if(rows[0].user_id !== userId) {
+		const user = await UserService.getUser(userId);
+		if(user.role !== 2)
+			return 403;
+	}
+
+	[err] = await db.query('UPDATE solutions SET ? WHERE id = ?', [data, solutionId]);
+	if(err) throw err;
+
+	return 200;
+}
+
 async function checkTagsArray(tags) {
 	if(!(tags instanceof Array))
 		return false;

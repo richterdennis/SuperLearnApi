@@ -389,7 +389,7 @@ router.post('/solution', AppKeyAuth, TokenAuth, _(async function(req, res) {
  *
  * @security  AppKeyAuth, TokenAuth
  *
- * @path*  {integer}  answerId  ID of solution to update
+ * @path*  {integer}  solutionId  ID of solution to update
  *
  * @body*  {Object}  Solution object
  *    {
@@ -403,6 +403,37 @@ router.post('/solution', AppKeyAuth, TokenAuth, _(async function(req, res) {
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/solution/:solutionId', AppKeyAuth, TokenAuth, function(req, res) {
-	// updateSolution
-});
+router.put('/solution/:solutionId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const solutionId = parseInt(req.params.solutionId);
+
+	if(!solutionId || solutionId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	let changes = 0;
+	const update = {};
+
+	if(req.body.text) {
+		update.text = req.body.text;
+		changes++;
+	}
+
+	if('image' in req.body) {
+		update.image = req.body.image;
+		changes++;
+	}
+
+	if(!changes)
+		return res.status(405).end('Invalid input');
+
+	const userId = req.currentUser.id;
+
+	const status = await QuestionService.updateSolution(userId, solutionId, update);
+
+	switch(status) {
+		case 200: res.status(200).end('Object successfully updated'); break;
+		case 403: res.status(403).end('Forbidden');                   break;
+		case 404: res.status(404).end('Object not found');            break;
+		default:
+			res.sendStatus(status);
+	}
+}));
