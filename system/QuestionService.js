@@ -151,6 +151,37 @@ exports.updateAnswer = async function(userId, answerId, data) {
 	return 200;
 }
 
+exports.createSolution = async function(userId, solution) {
+	let [err, res] = await db.query('SELECT user_id FROM questions WHERE id = ?', [solution.questionId]);
+	if(err) throw err;
+
+	if(res.length < 1)
+		return [404, null];
+
+	if(res[0].user_id !== userId) {
+		const user = await UserService.getUser(userId);
+		if(user.role !== 2)
+			return [403, null];
+	}
+
+	const data = {
+		text: solution.text,
+		question_id: solution.questionId
+	};
+
+	if(solution.image)
+		data.image = solution.image;
+
+	[err, res] = await db.query('INSERT INTO solutions SET ?', [data]);
+	if(err) throw err;
+
+	const solutionId = res.insertId;
+
+	return [200, {
+		id: solutionId
+	}];
+}
+
 async function checkTagsArray(tags) {
 	if(!(tags instanceof Array))
 		return false;

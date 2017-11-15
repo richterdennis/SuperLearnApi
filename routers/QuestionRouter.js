@@ -354,11 +354,34 @@ router.put('/answer/:answerId', AppKeyAuth, TokenAuth, _(async function(req, res
  *
  * @response  {400}  Invalid ID supplied
  * @response  {403}  Forbidden
+ * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.post('/solution', AppKeyAuth, TokenAuth, function(req, res) {
-  // createSolution
-});
+router.post('/solution', AppKeyAuth, TokenAuth, _(async function(req, res) {
+  const solution = req.body;
+
+  if(
+  	!solution ||
+  	!solution.questionId ||
+  	!solution.text
+  )
+  	return res.status(405).end('Invalid input');
+
+  if(solution.questionId < 1)
+  	return res.status(400).end('Invalid ID supplied');
+
+  const userId = req.currentUser.id;
+
+  const [status, cRes] = await QuestionService.createSolution(userId, solution);
+
+  switch(status) {
+		case 200: res.json(cRes);                          break;
+		case 403: res.status(403).end('Forbidden');        break;
+		case 404: res.status(404).end('Object not found'); break;
+		default:
+			res.sendStatus(status);
+	}
+}));
 
 /**
  * Updates an existing solution
