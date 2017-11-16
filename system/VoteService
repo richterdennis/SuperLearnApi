@@ -1,5 +1,5 @@
 /**
- * Update a report
+ * Update a score for a question
  *
  * @param   {Number}  value      voting value for question 
  * @param   {Number}  qestionId  The question id
@@ -7,13 +7,25 @@
  * @return  {boolean}             success?
  */
 exports.voteQuestion = async function(qestionId, value){
-	const [err, res] = await db.query('UPDATE votings SET score = score + ? WHERE id = ?'
+	const [err, res] = await db.query('UPDATE votings INNER JOIN votings_questions_rel ON votings.id = votings_questions_rel.voting_id INNER JOIN questions ON questions.id = votings_questions_rel.question_id SET votings.score = ? WHERE questions.id = ?'
+		, [value, qestionId]);
+	if(err) throw err;
+
+	const [err, res] = await db.query('UPDATE questions INNER JOIN votings_questions_rel ON questions.id = votings_questions_rel.question_idINNER JOIN votings ON votings.id = votings_questions_rel.voting_id SET questions.score = questions.score + ? WHERE questions.id = ?'
 		, [value, qestionId]);
 	if(err) throw err;
 
 	return !!res.changedRows;
 }
 
+/**
+ * Update a score for an user
+ *
+ * @param   {Number}  value      voting value for user 
+ * @param   {Number}  qestionId  The user id
+ *
+ * @return  {boolean}             success?
+ */
 exports.voteUser = async function(userId, value){
 	const [err, res] = await db.query('UPDATE votings SET score = score + ? WHERE id = ?'
 		, [value, userId]);
