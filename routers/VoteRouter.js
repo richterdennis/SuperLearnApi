@@ -16,13 +16,13 @@ const router = module.exports = exports = express.Router();
  * @response  {405}  Invalid input
  */
 router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, _(async function(req, res) {
-	const value = parseint(req.params.value);
-	const questionId = parseint(req.params.questionId);
+	const value = parseInt(req.params.value);
+	const questionId = parseInt(req.params.questionId);
 
 	if(!questionId) 
 		return res.status(400).end('Invalid ID supplied');
 
-	if(value !== 1 || value !==0 || value !==-1)
+	if(value !== 1 && value !==0 && value !==-1)
 		return res.status(405).end('Invalid input');
 
 	await VoteService.voteQuestion(questionId, Value);
@@ -42,16 +42,16 @@ router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, _(async f
  * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/vote/:value/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
-	const value = parseint(req.params.value);
-	const userId = parseint(req.params.userId);
+router.put('/vote/:value/user/:userId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const value = parseInt(req.params.value);
+	const userId = parseInt(req.params.userId);
 
 	if(!userId) 
 		return res.status(404).end('Invalid ID supplied');
 
-	if(value !== 1 || value !==0 || value !==-1)
+	if(value !== 1 && value !==0 && value !==-1)
 		return res.status(405).end('Invalid input');
 
 	await VoteService.voteUser(userId,value);
 	res.end('Vote successfully updated');
-});
+}));
