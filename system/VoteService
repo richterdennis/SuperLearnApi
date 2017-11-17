@@ -27,7 +27,11 @@ exports.voteQuestion = async function(qestionId, value){
  * @return  {boolean}             success?
  */
 exports.voteUser = async function(userId, value){
-	const [err, res] = await db.query('UPDATE votings SET score = score + ? WHERE id = ?'
+	const [err, res] = await db.query('UPDATE votings INNER JOIN votings_user_rel ON votings.id = votings_user_rel.voting_id INNER JOIN user ON user.id = votings_user_rel.user_id SET votings.score = 1 WHERE user.id = 1'
+		, [value, userId]);
+	if(err) throw err;
+
+	const [err, res] = await db.query('UPDATE user INNER JOIN votings_user_rel ON user.id = votings_user_rel.user_id INNER JOIN votings ON votings.id = votings_user_rel.voting_id SET user.score = user.score + ? WHERE user.id = ?'
 		, [value, userId]);
 	if(err) throw err;
 
