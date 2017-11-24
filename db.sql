@@ -62,6 +62,9 @@ CREATE TABLE IF NOT EXISTS `modules_user_rel` (
   `module_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `passed` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `level` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  `exp` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  `reached_milestones` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`module_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
