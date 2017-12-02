@@ -25,7 +25,7 @@ router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, _(async f
 	if(value !== 1 && value !==0 && value !==-1)
 		return res.status(405).end('Invalid input');
 
-	await VoteService.voteQuestion(questionId, Value);
+	await VoteService.voteQuestion(questionId, value);
 	res.end('Vote successfully updated');
 }));
 

@@ -7,12 +7,28 @@
  * @return  {boolean}             success?
  */
 exports.voteQuestion = async function(qestionId, value){
-	const [err, res] = await db.query('UPDATE votings INNER JOIN votings_questions_rel ON votings.id = votings_questions_rel.voting_id INNER JOIN questions ON questions.id = votings_questions_rel.question_id SET votings.score = ? WHERE questions.id = ?'
-		, [value, qestionId]);
+	let queryOne = `
+	UPDATE votings v
+	JOIN votings_questions_rel vq
+	ON v.id = vq.voting_id  
+	JOIN questions q
+	ON q.id = vq.question_id 
+	SET v.score = ? 
+	WHERE q.id = ?`
+
+	let queryTwo = `
+	UPDATE questions q 
+	JOIN votings_questions_rel vq
+	ON q.id = vq.question_id  
+	JOIN votings v
+	ON v.id = vq.voting_id 
+	SET q.score = q.score + v.score 
+	WHERE q.id = ?`
+
+	let [err, res] = await db.query(queryOne, [value, qestionId]);
 	if(err) throw err;
 
-	const [err, res] = await db.query('UPDATE questions INNER JOIN votings_questions_rel ON questions.id = votings_questions_rel.question_idINNER JOIN votings ON votings.id = votings_questions_rel.voting_id SET questions.score = questions.score + ? WHERE questions.id = ?'
-		, [value, qestionId]);
+	[err, res] = await db.query(queryTwo, qestionId);
 	if(err) throw err;
 
 	return !!res.changedRows;
@@ -27,12 +43,28 @@ exports.voteQuestion = async function(qestionId, value){
  * @return  {boolean}             success?
  */
 exports.voteUser = async function(userId, value){
-	const [err, res] = await db.query('UPDATE votings INNER JOIN votings_user_rel ON votings.id = votings_user_rel.voting_id INNER JOIN user ON user.id = votings_user_rel.user_id SET votings.score = 1 WHERE user.id = 1'
-		, [value, userId]);
+	let queryOne = `
+	UPDATE votings v
+	JOIN votings_user_rel uq
+	ON v.id = uq.voting_id  
+	JOIN user u
+	ON u.id = uq.user_id 
+	SET v.score = ? 
+	WHERE u.id = ?`
+
+	let queryTwo = `
+	UPDATE user u  
+	JOIN votings_user_rel uq
+	ON u.id = uq.user_id  
+	JOIN votings v
+	ON v.id = uq.voting_id 
+	SET u.score = u.score + ? 
+	WHERE u.id = ?`
+
+	let [err, res] = await db.query(queryOne, [value, userId]);
 	if(err) throw err;
 
-	const [err, res] = await db.query('UPDATE user INNER JOIN votings_user_rel ON user.id = votings_user_rel.user_id INNER JOIN votings ON votings.id = votings_user_rel.voting_id SET user.score = user.score + ? WHERE user.id = ?'
-		, [value, userId]);
+	[err, res] = await db.query(queryTwo, [value, userId]);
 	if(err) throw err;
 
 	return !!res.changedRows;
