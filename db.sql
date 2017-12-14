@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS `medals` (
 -- Struktur von Tabelle superlearn.modules
 CREATE TABLE IF NOT EXISTS `modules` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `text` varchar(150) NOT NULL,
+  `short` varchar(3) NOT NULL,
+  `long` varchar(150) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -61,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `modules` (
 CREATE TABLE IF NOT EXISTS `modules_user_rel` (
   `module_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
+  `fav` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `passed` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `level` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   `exp` INT(10) UNSIGNED NOT NULL DEFAULT '0',

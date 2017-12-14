@@ -29,9 +29,11 @@ router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, function(req, res
  *      {
  *        "id": 1337,
  *        "text": "Grundlagen der Informatik",
+ *        "fav": false,
  *        "passed": false,
  *        "lastRequested": 0,
  *        "semester": 1,
+ *        "questions": 42,
  *        "progress": 63
  *      }
  *    ]
