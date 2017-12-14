@@ -16,22 +16,20 @@ const router = module.exports = exports = express.Router();
  * @response  {404}  Object not found
  */
 router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	
 	const moduleId = parseInt(req.params.moduleId);
-
 	if (!moduleId || moduleId < 1)
 		return res.status(400).end('Invalid ID supplied');
 
 	const passed = parseInt(req.params.passed);
-	const user = req.currentUser.id;
+	if (!passed || passed != 1 || passed != 0)
+		return res.status(400).end('Invalid parameter for passed supplied');
 
+	const user = req.currentUser.id;
 	if (!user)
 		return res.status(404).end('User not found');
 	
-	await ModuleService.updateModule({
-		module_id: moduleId,
-		user_id: user,
-		passed: passed
-	});
+	await ModuleService.updateModule({moduleId, passed, user});
 
 	res.status(200).end();
 }));
@@ -55,7 +53,10 @@ router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(
  *      }
  *    ]
  */
-router.get('/modules', AppKeyAuth, TokenAuth, function(req, res) {
-	// getModules
+router.get('/modules', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const user = await UserService.getUser(req.currentUser.id);
+
+	await ModuleService.getAllModules(user);
+
 	res.status(200).end();
-});
+}));
