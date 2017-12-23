@@ -1,3 +1,5 @@
+const RoundService = require('../system/RoundService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -43,9 +45,14 @@ const router = module.exports = exports = express.Router();
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
  */
-router.get('/round/module/:moduleId', AppKeyAuth, TokenAuth, function(req, res) {
-	// getRoundFromModule
-});
+router.get('/round/module/:moduleId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const moduleId = parseInt(req.params.moduleId);
+
+	if(!moduleId || moduleId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	res.json(await RoundService.getRoundFromModule(moduleId, req.currentUser.id));
+}));
 
 /**
  * Gets a random round from a given user ID
