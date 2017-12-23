@@ -12,7 +12,7 @@
 CREATE TABLE IF NOT EXISTS `answers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `correct` tinyint(1) NOT NULL DEFAULT '0',
-  `text` varchar(50) NOT NULL,
+  `text` varchar(50) NULL DEFAULT NULL,
   `question_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `question_id` (`question_id`)
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `medals` (
 -- Struktur von Tabelle superlearn.modules
 CREATE TABLE IF NOT EXISTS `modules` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `short` varchar(3) NOT NULL,
+  `short` varchar(4) NOT NULL,
   `long` varchar(150) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

@@ -13,5 +13,5 @@ exports.createTag = async function(tag) {
 	const [err, res] = await db.query('INSERT INTO question_tags SET ?', data);
 	if(err) throw err;
 
-	return res.insertedId;
+	return res.insertId;
 }
