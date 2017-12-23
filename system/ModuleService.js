@@ -1,43 +1,57 @@
 /**
- * Update user module status
- * 
- * @param {Object} data update Data
+ * Update the module relationship to the user
+ *
+ * @param   {Number}  moduleId    The module id
+ * @param   {Number}  userId      The user id
+ * @param   {Object}  updateData  The update value
+ * @return  {boolean}             Success?
  */
-exports.updateModule = async function(moduleData) {
-	const data = {
-		module_id: moduleData.moduleId,
-		passed: moduleData.passed,
-		user_id: moduleData.user
-	}
+exports.updateModuleRel = async function(moduleId, userId, updateData) {
+	const insertData = Object.assign({}, updateData, {
+		module_id: moduleId,
+		user_id: userId
+	});
 
-	const [err, res] = await db.query(
-		'INSERT INTO modules_user_rel SET ? ON DUPLICATE KEY UPDATE passed = ? WHERE user_id = ? AND module_id = ?', 
-		[data, data.passed, data.user_id, data.module_id]
-	);
-	 
-	if (err) throw err;
+	const query = `
+		INSERT INTO modules_user_rel SET ?
+		ON DUPLICATE KEY
+		UPDATE ?
+	`;
 
-	return !!res.changedRows || !!res.affectedRows;
+	const [err, res] = await db.query(query, [insertData, updateData]);
+	if(err) throw err;
+
+	return !!res.affectedRows;
 }
 
-/*
- *        "id": 1337,
- *        "text": "Grundlagen der Informatik",
- *        "passed": false,
- *        "lastRequested": 0,
- *        "semester": 1,
- *        "progress": 63
-*/
+/**
+ * Get all the relevant modules for a given user
+ *
+ * @param   {Number}  userId  The user id
+ * @return  {Array}           The modules
+ */
+exports.getAllModules = async function(userId) {
+	const query = `
+		SELECT
+			m.id,
+			m.short,
+			m.long,
+			IFNULL(mu.status, 0) as status,
+			sm.semester
+		FROM modules m
+			JOIN studies_courses_modules_rel sm
+				ON m.id = sm.module_id
+			JOIN user_studies_courses_rel us
+				ON sm.studies_course_id = us.studies_course_id
+			LEFT JOIN modules_user_rel mu
+				ON m.id = mu.module_id
+		WHERE us.user_id = ?
+	`;
 
-exports.getAllModules = async function(moduleData) {
-	const data = { user_id: moduleData };
-
-	const [err, res] = await db.query(
-		  'SELECT M.id AS id, M.text AS text, MU.passed as passed FROM modules M, modules_user_rel MU WHERE MU.user_id = ? AND MU.module_id = M.id',
-		  data
-
-	);
+	const [err, res] = await db.query(query, [userId]);
 	if (err) throw err;
+
+	// TODO: Add lastRequested, questions, progress
 
 	return res;
 }

@@ -4,34 +4,32 @@ const ModuleService = require('../system/ModuleService');
 const router = module.exports = exports = express.Router();
 
 /**
- * Set an module to passed
+ * Set a module status
  *
  * @security  AppKeyAuth, TokenAuth
  *
- * @path*  {integer}  moduleId  ID of module to update
- * @path*  {integer}  passed    passed or unpassed
+ * @path*  {Number}  moduleId  ID of module to update
+ * @path*  {Number}  status    The status of the module
+ *                             0:default 1:fav 2:passed
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {404}  Object not found
  */
-router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(req, res) {
-	
+router.put('/module/:moduleId/:status', AppKeyAuth, TokenAuth, _(async function(req, res) {
 	const moduleId = parseInt(req.params.moduleId);
-	if (!moduleId || moduleId < 1)
+	const status = parseInt(req.params.status);
+
+	if(!moduleId || moduleId < 1)
 		return res.status(400).end('Invalid ID supplied');
 
-	const passed = parseInt(req.params.passed);
-	if (!passed || passed != 1 || passed != 0)
-		return res.status(400).end('Invalid parameter for passed supplied');
+	if(status != 0 && status != 1 && status != 2)
+		return res.status(400).end('Invalid status supplied');
 
-	const user = req.currentUser.id;
-	if (!user)
-		return res.status(404).end('User not found');
-	
-	await ModuleService.updateModule({moduleId, passed, user});
+	await ModuleService.updateModuleRel(moduleId, req.currentUser.id, {
+		status: status
+	});
 
-	res.status(200).end();
+	res.end('Object successfully updated');
 }));
 
 /**
@@ -45,9 +43,9 @@ router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(
  *    [
  *      {
  *        "id": 1337,
- *        "text": "Grundlagen der Informatik",
- *        "fav": false,
- *        "passed": false,
+ *        "short": "GI",
+ *        "long": "Grundlagen der Informatik",
+ *        "status": 0,
  *        "lastRequested": 0,
  *        "semester": 1,
  *        "questions": 42,
@@ -56,9 +54,5 @@ router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, _(async function(
  *    ]
  */
 router.get('/modules', AppKeyAuth, TokenAuth, _(async function(req, res) {
-	const user = await UserService.getUser(req.currentUser.id);
-
-	await ModuleService.getAllModules(user);
-
-	res.status(200).end();
+	res.json(await ModuleService.getAllModules(req.currentUser.id));
 }));

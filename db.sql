@@ -62,8 +62,7 @@ CREATE TABLE IF NOT EXISTS `modules` (
 CREATE TABLE IF NOT EXISTS `modules_user_rel` (
   `module_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
-  `fav` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `passed` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0:default 1:fav 2:passed',
   `level` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   `exp` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   `reached_milestones` INT(10) UNSIGNED NOT NULL DEFAULT '0',
