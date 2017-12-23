@@ -26,7 +26,7 @@ router.post('/tag', AppKeyAuth, TokenAuth, _(async function(req, res) {
 	if(!tag)
 		return res.status(405).end("Invalid input");
 
-	const tagId = await TagService.createTag(tag);
+	const tagId = await TagService.createTag(req.currentUser.id, tag);
 	res.status(201).json({id: tagId});
 }));
 
@@ -47,7 +47,7 @@ router.post('/tag', AppKeyAuth, TokenAuth, _(async function(req, res) {
  *      }
  *    ]
  */
-router.get('/tags', AppKeyAuth, TokenAuth, function(req, res) {
-	// getTags
-	res.status(200).end();
-});
+router.get('/tags', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const search = req.query.search || '';
+	res.json(await TagService.getTags(search));
+}));
