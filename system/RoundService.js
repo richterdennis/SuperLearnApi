@@ -1,5 +1,12 @@
 const QuestionService = require('../system/QuestionService');
 
+/**
+ * Creates a round with questions from a given module
+ *
+ * @param   {Number}  moduleId  The module id
+ * @param   {Number}  userId    The user id
+ * @return  {Object}            The round
+ */
 exports.getRoundFromModule = async function(moduleId, userId) {
 	let err, res;
 
@@ -63,4 +70,18 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 	round.questions = questions;
 
 	return round;
+}
+
+/**
+ * The updates a round
+ *
+ * @param   {Number}  roundId  The round id
+ * @param   {Object}  data     The data
+ * @return  {boolean}          Success?
+ */
+exports.updateRound = async function(roundId, data) {
+	const [err, res] = await db.query('UPDATE rounds SET ? WHERE id = ?', [data, roundId]);
+	if(err) throw err;
+
+	return !!res.changedRows;
 }
