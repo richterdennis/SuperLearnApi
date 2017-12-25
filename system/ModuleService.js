@@ -31,7 +31,9 @@ exports.updateModuleRel = async function(moduleId, userId, updateData) {
  * @return  {Array}           The modules
  */
 exports.getAllModules = async function(userId) {
-	const query = `
+	let query, err, mainRes, res;
+
+	query = `
 		SELECT
 			m.id,
 			m.short,
@@ -48,10 +50,44 @@ exports.getAllModules = async function(userId) {
 		WHERE us.user_id = ?
 	`;
 
-	const [err, res] = await db.query(query, [userId]);
-	if (err) throw err;
+	[err, mainRes] = await db.query(query, [userId]);
+	if(err) throw err;
 
-	// TODO: Add lastRequested, questions, progress
+	const modules = [];
 
-	return res;
+	for (let i = 0; i < mainRes.length; i++) {
+		const module = mainRes[i];
+
+		// Add lastRequested
+		query = `
+			SELECT timestamp
+			FROM rounds
+			WHERE module_id = ?
+			ORDER BY timestamp DESC
+			LIMIT 1
+		`;
+
+		[err, res] = await db.query(query, [module.id]);
+		if(err) throw err;
+
+		module.lastRequested = res[0] && res[0].timestamp || null;
+
+		// Add questions
+		query = `
+			SELECT COUNT(id) as count
+			FROM questions
+			WHERE module_id = ?
+		`;
+
+		[err, res] = await db.query(query, [module.id]);
+		if(err) throw err;
+
+		module.questions = res[0] && res[0].count || 0;
+
+		// TODO: Add progress
+
+		modules.push(module);
+	}
+
+	return modules;
 }
