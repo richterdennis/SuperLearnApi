@@ -71,13 +71,12 @@ exports.getTokenData = async function(token) {
  * @return  {boolean}         isExpired?
  */
 exports.checkTokenExpired = async function(userId, token) {
-	const query = 'SELECT token, expires FROM logins WHERE user_id = ? ORDER BY expires DESC LIMIT 1';
-	const [err, rows] = await db.query(query, [userId]);
+	const query = 'SELECT expires FROM logins WHERE user_id = ? AND token = ?';
+	const [err, rows] = await db.query(query, [userId, token]);
 	if(err) throw err;
 
 	return (
 		!rows.length                       ||
-		rows[0].token !== token            ||
 		!(rows[0].expires instanceof Date) ||
 		rows[0].expires < Date.now()
 	);

@@ -1,21 +1,36 @@
+const UserService = require('../system/UserService');
+const ModuleService = require('../system/ModuleService');
+
 const router = module.exports = exports = express.Router();
 
 /**
- * Set an module to passed
+ * Set a module status
  *
  * @security  AppKeyAuth, TokenAuth
  *
- * @path*  {integer}  moduleId  ID of module to update
- * @path*  {integer}  passed    passed or unpassed
+ * @path*  {Number}  moduleId  ID of module to update
+ * @path*  {Number}  status    The status of the module
+ *                             0:default 1:fav 2:passed
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {404}  Object not found
  */
-router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, function(req, res) {
-	// updateModule
-	res.status(200).end();
-});
+router.put('/module/:moduleId/:status', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const moduleId = parseInt(req.params.moduleId);
+	const status = parseInt(req.params.status);
+
+	if(!moduleId || moduleId < 1)
+		return res.status(400).end('Invalid ID supplied');
+
+	if(status != 0 && status != 1 && status != 2)
+		return res.status(400).end('Invalid status supplied');
+
+	await ModuleService.updateModuleRel(moduleId, req.currentUser.id, {
+		status: status
+	});
+
+	res.end('Object successfully updated');
+}));
 
 /**
  * Get all modules
@@ -28,15 +43,16 @@ router.put('/module/:moduleId/:passed', AppKeyAuth, TokenAuth, function(req, res
  *    [
  *      {
  *        "id": 1337,
- *        "text": "Grundlagen der Informatik",
- *        "passed": false,
+ *        "short": "GI",
+ *        "long": "Grundlagen der Informatik",
+ *        "status": 0,
  *        "lastRequested": 0,
  *        "semester": 1,
+ *        "questions": 42,
  *        "progress": 63
  *      }
  *    ]
  */
-router.get('/modules', AppKeyAuth, TokenAuth, function(req, res) {
-	// getModules
-	res.status(200).end();
-});
+router.get('/modules', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	res.json(await ModuleService.getAllModules(req.currentUser.id));
+}));
