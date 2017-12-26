@@ -1,4 +1,5 @@
 const UserService = require('./UserService');
+const VoteService = require('./VoteService');
 
 /**
  * Creates a question
@@ -114,25 +115,43 @@ exports.getQuestionsByUser = async function(userId) {
 	const [err, res] = await db.query('SELECT * FROM questions WHERE user_id = ?', [userId]);
 	if(err) throw err;
 
-	const questions = [];
-	for(let i = 0; i < res.length; i++) {
-		const row = res[i];
-		questions.push({
-			id: row.id,
-			text: row.text,
-			image: row.image,
-			questionType: row.question_type_id,
-			moduleId: row.module_id,
-			score: row.score,
-			voted: await VoteService.getQuestionVoteByUser(userId, row.id),
-			userId: row.user_id,
-			created: row.created,
-			answers: await exports.getAnswers(row.id),
-			solution: await exports.getSolution(row.id)
-		});
-	}
+	return await Promise.all(
+		res.map(row => exports.completeQuestionByRes(userId, row))
+	);
+}
 
-	return questions;
+/**
+ * Complete a question by db result row
+ *
+ * @param   {Number}  userId  The current user id
+ * @param   {Object}  row     A row of the db result
+ * @return  {Object}          The question
+ */
+exports.completeQuestionByRes = async function(userId, row) {
+	const query = `
+		SELECT * FROM user_questions_rel WHERE user_id = ? AND question_id = ?
+	`;
+
+	const [err, res] = await db.query(query, [userId, row.id]);
+	if(err) throw err;
+
+	return {
+		id: row.id,
+		text: row.text,
+		image: row.image,
+		questionType: row.question_type_id,
+		moduleId: row.module_id,
+		score: row.score,
+		voted: await VoteService.getQuestionVoteByUser(userId, row.id),
+		userId: row.user_id,
+		created: row.created,
+		answers: await exports.getAnswers(row.id),
+		solution: await exports.getSolution(row.id),
+		starCounter: res[0] && res[0].star_counter || 0,
+		maxStarCounter: res[0] && res[0].max_star_counter || 0,
+		answeredCounter: res[0] && res[0].answered_counter || 0,
+		wrongCounter: res[0] && res[0].wrong_counter || 0
+	};
 }
 
 /**

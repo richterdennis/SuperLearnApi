@@ -128,12 +128,12 @@ router.put('/round/:roundId/finish', AppKeyAuth, TokenAuth, _(async function(req
 	if(!roundId || roundId < 1)
 		return res.status(400).end('Invalid ID supplied');
 
-	const success = await RoundService.updateRound(roundId, {state: 1});
+	let success = await RoundService.updateRound(roundId, {state: 1});
 
 	if(!success)
 		return res.status(404).end('Object not found');
 
-	const success = await QuestionService.updateQuestionsStatistics(
+	success = await QuestionService.updateQuestionsStatistics(
 		req.currentUser.id, questions
 	);
 

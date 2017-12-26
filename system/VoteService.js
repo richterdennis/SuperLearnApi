@@ -151,5 +151,5 @@ exports.getQuestionVoteByUser = async function(userId, questionId) {
 	const [err, res] = await db.query(query, [questionId, userId]);
 	if(err) throw err;
 
-	return res[0].score;
+	return res[0] && res[0].score || 0;
 }

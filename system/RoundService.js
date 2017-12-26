@@ -49,25 +49,9 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 	[err, res] = await db.query('SELECT * FROM questions WHERE id IN (?)', [ids.slice(0, 10)]);
 	if(err) throw err;
 
-	const questions = [];
-	for(let i = 0; i < res.length; i++) {
-		const row = res[i];
-		questions.push({
-			id: row.id,
-			text: row.text,
-			image: row.image,
-			questionType: row.question_type_id,
-			moduleId: row.module_id,
-			score: row.score,
-			voted: await VoteService.getQuestionVoteByUser(userId, row.id),
-			userId: row.user_id,
-			created: row.created,
-			answers: await QuestionService.getAnswers(row.id),
-			solution: await QuestionService.getSolution(row.id)
-		});
-	}
-
-	round.questions = questions;
+	round.questions = await Promise.all(
+		res.map(row => QuestionService.completeQuestionByRes(userId, row))
+	);
 
 	return round;
 }
