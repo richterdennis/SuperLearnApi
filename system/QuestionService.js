@@ -271,6 +271,82 @@ exports.updateSolution = async function(userId, solutionId, data) {
 }
 
 /**
+ * Updates the statistics for every given question
+ *
+ * @param   {Number}   userId     The user id which answered the questions
+ * @param   {Array}    questions  The questions array
+ * @return  {boolean}             If false one or more questions has an invalid
+ *                                or missing id.
+ */
+exports.updateQuestionsStatistics = async function(userId, questions) {
+	let someInvalid = false, query, err, res;
+
+	for(let i = 0; i < questions.length; i++) {
+		const question = questions[i];
+
+		if(!question.id || question.id < 1) {
+			someInvalid = true;
+			continue;
+		}
+
+		query = `
+			SELECT
+				star_counter,
+				max_star_counter,
+				answered_counter,
+				wrong_counter
+			FROM user_questions_rel
+			WHERE user_id = ? AND question_id = ?
+		`;
+
+		[err, res] = await db.query(query, [userId, question.id]);
+		if(err) throw err;
+
+		// Entry exists
+		if(res[0]) {
+			const updateData = {
+				star_counter: question.correct ? res[0].star_counter + 1 : 0,
+				answered_counter: res[0].answered_counter + 1
+			};
+
+			if(question.correct && res[0].star_counter + 1 > res[0].max_star_counter) {
+				updateData.max_star_counter = res[0].star_counter + 1;
+			}
+
+			if(!question.correct) {
+				updateData.wrong_counter = res[0].wrong_counter + 1;
+			}
+
+			query = `
+				UPDATE user_questions_rel SET ? WHERE user_id = ? AND question_id = ?
+			`;
+
+			[err] = await db.query(query, [updateData, userId, question.id]);
+			if(err) throw err;
+		}
+
+		// Entry exists not
+		else {
+			const insertData = {
+				user_id: userId,
+				question_id: question.id,
+				star_counter: question.correct ? 1 : 0,
+				max_star_counter: question.correct ? 1 : 0,
+				answered_counter: 1,
+				wrong_counter: question.correct ? 0 : 1,
+			};
+
+			query = `INSERT INTO user_questions_rel SET ?`;
+
+			[err] = await db.query(query, [insertData]);
+			if(err) throw err;
+		}
+	}
+
+	return !someInvalid;
+}
+
+/**
  * Private check function used by create question
  * This checks the tags array
  *
