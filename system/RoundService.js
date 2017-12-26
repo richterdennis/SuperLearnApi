@@ -59,7 +59,7 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 			questionType: row.question_type_id,
 			moduleId: row.module_id,
 			score: row.score,
-			// TODO: voted: await VoteService.getQuestionVoteByUser(userId, row.id),
+			voted: await VoteService.getQuestionVoteByUser(userId, row.id),
 			userId: row.user_id,
 			created: row.created,
 			answers: await QuestionService.getAnswers(row.id),
