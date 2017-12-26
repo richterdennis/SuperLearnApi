@@ -1,3 +1,5 @@
+const VoteService = require('../system/VoteService');
+
 const router = module.exports = exports = express.Router();
 
 /**
@@ -10,12 +12,22 @@ const router = module.exports = exports = express.Router();
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, function(req, res) {
-	// voteQuestion
-});
+router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const value = parseInt(req.params.value);
+	const questionId = parseInt(req.params.questionId);
+
+	if(value !== 1 && value !== 0 && value !== -1)
+		return res.status(405).end('Invalid input');
+
+	if(!questionId)
+		return res.status(400).end('Invalid ID supplied');
+
+	await VoteService.voteQuestion(questionId, req.currentUser.id, value);
+
+	res.end('Object successfully updated');
+}));
 
 /**
  * Updates an existing vote or create one
@@ -27,9 +39,19 @@ router.put('/vote/:value/question/:questionId', AppKeyAuth, TokenAuth, function(
  *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
- * @response  {404}  Object not found
  * @response  {405}  Invalid input
  */
-router.put('/vote/:value/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
-	// voteUser
-});
+router.put('/vote/:value/user/:userId', AppKeyAuth, TokenAuth, _(async function(req, res) {
+	const value = parseInt(req.params.value);
+	const userId = parseInt(req.params.userId);
+
+	if(value !== 1 && value !== 0 && value !== -1)
+		return res.status(405).end('Invalid input');
+
+	if(!userId)
+		return res.status(400).end('Invalid ID supplied');
+
+	await VoteService.voteQuestion(userId, req.currentUser.id, value);
+
+	res.end('Object successfully updated');
+}));
