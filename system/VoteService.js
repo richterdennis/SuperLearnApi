@@ -67,43 +67,65 @@ exports.voteQuestion = async function(questionId, userId, value){
 /**
  * Update a score for an user
  *
- * @param   {Object}  voting     The voting data
- * @param   {Number}  value      voting value for user
- * @param   {Number}  qestionId  The user id
- *
- * @return  {boolean}             success?
+ * @param  {Number}  userId   The question id
+ * @param  {Number}  voterId  The user id which is voting
+ * @param  {Number}  value    Voting value for question (-1, 0, 1)
  */
-exports.voteUser = async function(voting, userId, value){
-	let data = {
-		id:    voting.id,
-		user_id: voting.user_id,
-		score:  value
-	};
+exports.voteUser = async function(userId, voterId, value){
+	let query, data, res, err;
 
-	let queryInsertVoting = `INSERT INTO votings SET ? ON DUPLICATE KEY UPDATE ?`
+	query = `
+		SELECT v.id, v.score
+		FROM votings v
+			JOIN votings_user_rel vu
+				ON v.id = vu.voting_id
+		WHERE
+			vu.user_id = ?
+			AND v.user_id = ?
+	`;
 
-	let queryVotingUserRel = `
-	INSERT INTO votings_user_rel VALUES(?,?)
-	ON DUPLICATE KEY
-	UPDATE votings_user_rel.user_id = ?`
-
-	let queryTwo = `
-	UPDATE user u
-	JOIN votings_user_rel uq
-	ON u.id = uq.user_id
-	JOIN votings v
-	ON v.id = uq.voting_id
-	SET u.score = u.score + ?
-	WHERE u.id = ?`
-
-	let [err, res] = await db.query(queryInsertVoting, [data, data]);
+	[err, res] = await db.query(query, [userId, voterId]);
 	if(err) throw err;
 
-	[err, res] = await db.query(queryVotingUserRel, [data.id, userId, userId]);
-	if(err) throw err;
+	let balanceValue = value;
 
-	[err, res] = await db.query(queryTwo, [data.score, userId]);
-	if(err) throw err;
+	// Voting exists
+	if(res[0]) {
+		balanceValue = value - res[0].score;
 
-	return !!res.changedRows;
+		query = `UPDATE votings SET score = ? WHERE id = ?`;
+
+		[err] = await db.query(query, [value, res[0].id]);
+		if(err) throw err;
+	}
+
+	// Voting exists not
+	else {
+		query = `INSERT INTO votings SET ?`;
+
+		data = {
+			user_id: voterId,
+			score: value
+		};
+
+		[err, res] = await db.query(query, [data]);
+		if(err) throw err;
+
+		const votingId = res.insertId;
+
+		query = `INSERT INTO votings_user_rel SET ?`;
+
+		data = {
+			voting_id: votingId,
+			user_id: userId
+		};
+
+		[err] = await db.query(query, [data]);
+		if(err) throw err;
+	}
+
+	// Balance user score
+	query = `UPDATE user SET score = score + ? WHERE id = ?`;
+	[err] = await db.query(query, [balanceValue, userId]);
+	if(err) throw err;
 }
