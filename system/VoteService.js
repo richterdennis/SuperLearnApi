@@ -129,3 +129,27 @@ exports.voteUser = async function(userId, voterId, value){
 	[err] = await db.query(query, [balanceValue, userId]);
 	if(err) throw err;
 }
+
+/**
+ * Gets the vote from a given user for a given question
+ *
+ * @param   {Number}  userId      The voter
+ * @param   {Number}  questionId  The voted question
+ * @return  {Number}              The vote (-1, 0, 1)
+ */
+exports.getQuestionVoteByUser = async function(userId, questionId) {
+	const query = `
+		SELECT v.score
+		FROM votings v
+			JOIN votings_questions_rel vq
+				ON v.id = vq.voting_id
+		WHERE
+			vq.question_id = ?
+			AND v.user_id = ?
+	`;
+
+	const [err, res] = await db.query(query, [questionId, userId]);
+	if(err) throw err;
+
+	return res[0] && res[0].score || 0;
+}

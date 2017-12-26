@@ -1,4 +1,5 @@
 const RoundService = require('../system/RoundService');
+const QuestionService = require('../system/QuestionService');
 
 const router = module.exports = exports = express.Router();
 
@@ -107,20 +108,37 @@ router.get('/round/user/:userId', AppKeyAuth, TokenAuth, function(req, res) {
  *
  * @path*  {integer}  roundId  ID of round to finish
  *
+ * @body*  {Array}  Questions array with answer state
+ *    [
+ *    	{
+ *    	  "id": 1337,       | required
+ *    	  "correct": true  <|>
+ *    	}
+ *    ]
+ *
  * @response  {200}  Object successfully updated
  * @response  {400}  Invalid ID supplied
  * @response  {404}  Object not found
+ * @response  {405}  Invalid input
  */
 router.put('/round/:roundId/finish', AppKeyAuth, TokenAuth, _(async function(req, res) {
 	const roundId = parseInt(req.params.roundId);
+	const questions = req.body;
 
 	if(!roundId || roundId < 1)
 		return res.status(400).end('Invalid ID supplied');
 
-	const success = await RoundService.updateRound(roundId, {state: 1});
+	let success = await RoundService.updateRound(roundId, {state: 1});
 
 	if(!success)
 		return res.status(404).end('Object not found');
+
+	success = await QuestionService.updateQuestionsStatistics(
+		req.currentUser.id, questions
+	);
+
+	if(!success)
+		return res.status(405).end('Invalid input');
 
 	res.status(200).end('Object successfully updated');
 }));

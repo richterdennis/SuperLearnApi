@@ -1,4 +1,5 @@
 const UserService = require('./UserService');
+const VoteService = require('./VoteService');
 
 /**
  * Creates a question
@@ -114,25 +115,43 @@ exports.getQuestionsByUser = async function(userId) {
 	const [err, res] = await db.query('SELECT * FROM questions WHERE user_id = ?', [userId]);
 	if(err) throw err;
 
-	const questions = [];
-	for(let i = 0; i < res.length; i++) {
-		const row = res[i];
-		questions.push({
-			id: row.id,
-			text: row.text,
-			image: row.image,
-			questionType: row.question_type_id,
-			moduleId: row.module_id,
-			score: row.score,
-			// TODO: voted: await VoteService.getQuestionVoteByUser(userId, row.id),
-			userId: row.user_id,
-			created: row.created,
-			answers: await exports.getAnswers(row.id),
-			solution: await exports.getSolution(row.id)
-		});
-	}
+	return await Promise.all(
+		res.map(row => exports.completeQuestionByRes(userId, row))
+	);
+}
 
-	return questions;
+/**
+ * Complete a question by db result row
+ *
+ * @param   {Number}  userId  The current user id
+ * @param   {Object}  row     A row of the db result
+ * @return  {Object}          The question
+ */
+exports.completeQuestionByRes = async function(userId, row) {
+	const query = `
+		SELECT * FROM user_questions_rel WHERE user_id = ? AND question_id = ?
+	`;
+
+	const [err, res] = await db.query(query, [userId, row.id]);
+	if(err) throw err;
+
+	return {
+		id: row.id,
+		text: row.text,
+		image: row.image,
+		questionType: row.question_type_id,
+		moduleId: row.module_id,
+		score: row.score,
+		voted: await VoteService.getQuestionVoteByUser(userId, row.id),
+		userId: row.user_id,
+		created: row.created,
+		answers: await exports.getAnswers(row.id),
+		solution: await exports.getSolution(row.id),
+		starCounter: res[0] && res[0].star_counter || 0,
+		maxStarCounter: res[0] && res[0].max_star_counter || 0,
+		answeredCounter: res[0] && res[0].answered_counter || 0,
+		wrongCounter: res[0] && res[0].wrong_counter || 0
+	};
 }
 
 /**
@@ -268,6 +287,82 @@ exports.updateSolution = async function(userId, solutionId, data) {
 	if(err) throw err;
 
 	return 200;
+}
+
+/**
+ * Updates the statistics for every given question
+ *
+ * @param   {Number}   userId     The user id which answered the questions
+ * @param   {Array}    questions  The questions array
+ * @return  {boolean}             If false one or more questions has an invalid
+ *                                or missing id.
+ */
+exports.updateQuestionsStatistics = async function(userId, questions) {
+	let someInvalid = false, query, err, res;
+
+	for(let i = 0; i < questions.length; i++) {
+		const question = questions[i];
+
+		if(!question.id || question.id < 1) {
+			someInvalid = true;
+			continue;
+		}
+
+		query = `
+			SELECT
+				star_counter,
+				max_star_counter,
+				answered_counter,
+				wrong_counter
+			FROM user_questions_rel
+			WHERE user_id = ? AND question_id = ?
+		`;
+
+		[err, res] = await db.query(query, [userId, question.id]);
+		if(err) throw err;
+
+		// Entry exists
+		if(res[0]) {
+			const updateData = {
+				star_counter: question.correct ? res[0].star_counter + 1 : 0,
+				answered_counter: res[0].answered_counter + 1
+			};
+
+			if(question.correct && res[0].star_counter + 1 > res[0].max_star_counter) {
+				updateData.max_star_counter = res[0].star_counter + 1;
+			}
+
+			if(!question.correct) {
+				updateData.wrong_counter = res[0].wrong_counter + 1;
+			}
+
+			query = `
+				UPDATE user_questions_rel SET ? WHERE user_id = ? AND question_id = ?
+			`;
+
+			[err] = await db.query(query, [updateData, userId, question.id]);
+			if(err) throw err;
+		}
+
+		// Entry exists not
+		else {
+			const insertData = {
+				user_id: userId,
+				question_id: question.id,
+				star_counter: question.correct ? 1 : 0,
+				max_star_counter: question.correct ? 1 : 0,
+				answered_counter: 1,
+				wrong_counter: question.correct ? 0 : 1,
+			};
+
+			query = `INSERT INTO user_questions_rel SET ?`;
+
+			[err] = await db.query(query, [insertData]);
+			if(err) throw err;
+		}
+	}
+
+	return !someInvalid;
 }
 
 /**
