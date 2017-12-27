@@ -197,7 +197,20 @@ exports.voteUser = async function(userId, voterId, value){
 	}
 
 	// Balance user score
-	await ScoreService.updateUserScore(userId, balanceValue);
+	await ScoreService.updateUserScore(userId, balanceValue * 100);
+
+	// Balance user score which voted the other user
+	balanceValue = 0;
+
+	// on up
+	if(value == 1)
+		balanceValue += 10;
+
+	// revert on up
+	else if(res[0] && res[0].score == 1)
+		balanceValue -= 10;
+
+	await ScoreService.updateUserScore(voterId, balanceValue);
 }
 
 /**
