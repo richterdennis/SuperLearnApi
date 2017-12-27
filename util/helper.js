@@ -41,3 +41,19 @@ exports.expressAsyncWrapper = function(fn) {
 		fn(req, res, next).catch(next);
 	}
 }
+
+/**
+ * Simple shuffle of an array
+ *
+ * @param   {Array}  array  The array to shuffle
+ * @return  {Array}         The shuffled array
+ */
+exports.shuffle = function(array) {
+	for(let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		const t = array[i];
+		array[i] = array[j];
+		array[j] = t;
+	}
+	return array;
+}
