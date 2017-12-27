@@ -1,5 +1,6 @@
 const UserService = require('./UserService');
 const VoteService = require('./VoteService');
+const ScoreService = require('./ScoreService');
 
 /**
  * Creates a question
@@ -359,6 +360,23 @@ exports.updateQuestionsStatistics = async function(userId, questions) {
 
 			[err] = await db.query(query, [insertData]);
 			if(err) throw err;
+		}
+
+		if(!question.correct) continue;
+
+		// Question on 1st time correct +10
+		if(!res[0]) {
+			await ScoreService.updateUserScore(userId, 10);
+		}
+
+		// Question on 2nd time correct +15
+		else if(res[0].star_counter == 1 && res[0].max_star_counter == 1) {
+			await ScoreService.updateUserScore(userId, 15);
+		}
+
+		// Question on 3rd time correct +20
+		else if(res[0].star_counter == 2 && res[0].max_star_counter == 2) {
+			await ScoreService.updateUserScore(userId, 20);
 		}
 	}
 
