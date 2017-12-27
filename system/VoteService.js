@@ -60,8 +60,44 @@ exports.voteQuestion = async function(questionId, userId, value){
 
 	// Balance question score
 	query = `UPDATE questions SET score = score + ? WHERE id = ?`;
+
 	[err] = await db.query(query, [balanceValue, questionId]);
 	if(err) throw err;
+
+	// Check on down vote if there is a report
+	if(value < 0) {
+		query = `
+			SELECT
+				q.score,
+				r.report_type_id
+			FROM questions q
+				LEFT JOIN reports r
+					ON q.id = r.question_id
+			WHERE q.id = ?
+		`;
+
+		[err, res] = await db.query(query, [questionId]);
+		if(err) throw err;
+
+		/*
+		 * report types
+		 * 1 => offensive
+		 * 2 => duplicate
+		 * 3 => spelling
+		 * 4 => troll
+		 * 5 => other
+		 */
+		if(
+			res[0].score > -5 ||
+				res[0].reportTypeId != 1 &&
+				res[0].reportTypeId != 4
+		) return;
+
+		query = 'UPDATE questions SET deleted = 1 WHERE id = ?';
+
+		[err] = await db.query(query, [questionId]);
+		if(err) throw err;
+	}
 }
 
 /**
