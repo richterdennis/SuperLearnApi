@@ -10,3 +10,12 @@ exports.updateUserScore = async function(userId, value) {
 	const [err] = await db.query(query, [value, userId]);
 	if(err) throw err;
 }
+
+exports.updateUserScoreByQuestionId = async function(questionId, value) {
+	const query = `SELECT user_id FROM questions WHERE id = ?`;
+
+	const [err, res] = await db.query(query, [questionId]);
+	if(err) throw err;
+
+	await exports.updateUserScore(res[0].user_id, value);
+}

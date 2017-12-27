@@ -66,7 +66,7 @@ exports.voteQuestion = async function(questionId, userId, value){
 	[err] = await db.query(query, [balanceValue, questionId]);
 	if(err) throw err;
 
-	// Balance user score
+	// Balance user score which created the question
 	balanceValue = 0;
 
 	// on down
@@ -84,6 +84,19 @@ exports.voteQuestion = async function(questionId, userId, value){
 	// revert on up
 	else if(res[0] && res[0].score == 1)
 		balanceValue -= 50;
+
+	await ScoreService.updateUserScoreByQuestionId(questionId, balanceValue);
+
+	// Balance user score which voted the question
+	balanceValue = 0;
+
+	// on up
+	if(value == 1)
+		balanceValue += 5;
+
+	// revert on up
+	else if(res[0] && res[0].score == 1)
+		balanceValue -= 5;
 
 	await ScoreService.updateUserScore(userId, balanceValue);
 
@@ -184,9 +197,7 @@ exports.voteUser = async function(userId, voterId, value){
 	}
 
 	// Balance user score
-	query = `UPDATE user SET score = score + ? WHERE id = ?`;
-	[err] = await db.query(query, [balanceValue, userId]);
-	if(err) throw err;
+	await ScoreService.updateUserScore(userId, balanceValue);
 }
 
 /**
