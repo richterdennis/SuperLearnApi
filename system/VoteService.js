@@ -1,3 +1,5 @@
+const ScoreService = require('./ScoreService');
+
 /**
  * Update a score for a question
  *
@@ -63,6 +65,27 @@ exports.voteQuestion = async function(questionId, userId, value){
 
 	[err] = await db.query(query, [balanceValue, questionId]);
 	if(err) throw err;
+
+	// Balance user score
+	balanceValue = 0;
+
+	// on down
+	if(value == -1)
+		balanceValue -= 25;
+
+	// on up
+	else if(value == 1)
+		balanceValue += 50;
+
+	// revert on down
+	if(res[0] && res[0].score == -1)
+		balanceValue += 25;
+
+	// revert on up
+	else if(res[0] && res[0].score == 1)
+		balanceValue -= 50;
+
+	await ScoreService.updateUserScore(userId, balanceValue);
 
 	// Check on down vote if there is a report
 	if(value < 0) {
