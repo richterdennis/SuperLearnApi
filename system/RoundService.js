@@ -31,7 +31,22 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 		state: res[0].state
 	};
 
-	[err, res] = await db.query('SELECT id FROM questions WHERE module_id = ?', [moduleId]);
+	const query = `
+		SELECT id FROM questions
+		WHERE
+			module_id = ?
+			AND (
+				user_id = ?
+				OR
+				deleted = 0 AND (
+					score > -3
+					OR
+					created >= DATE_SUB(NOW(), INTERVAL 1 DAY)
+				)
+			)
+	`;
+
+	[err, res] = await db.query(query, [moduleId]);
 	if(err) throw err;
 
 	const ids = res.map(row => row.id);
