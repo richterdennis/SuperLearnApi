@@ -10,7 +10,7 @@ jwt.verify = helper.toAsync(jwt, jwt.verify);
  * @return  {Boolean}       isValid?
  */
 exports.isValidApp = async function(key) {
-	const [err, rows] = await db.query('SELECT valid FROM App WHERE token = ?', [key]);
+	const [err, rows] = await db.query('SELECT valid FROM app WHERE token = ?', [key]);
 	if(err) throw err;
 
 	return rows.length && rows[0].valid;
