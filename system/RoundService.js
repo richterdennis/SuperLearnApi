@@ -119,15 +119,31 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 }
 
 /**
- * This updates a round
+ * This finishes a round
  *
  * @param   {Number}  roundId  The round id
- * @param   {Object}  data     The data
- * @return  {boolean}          Success?
  */
-exports.updateRound = async function(roundId, data) {
-	const [err, res] = await db.query('UPDATE rounds SET ? WHERE id = ?', [data, roundId]);
+exports.finishRound = async function(roundId, userId) {
+	let query, err, res;
+/*
+	query = `
+		SELECT timestamp
+		FROM rounds
+		WHERE
+			user_id = ?
+			AND
+			state = 1
+			AND
+			timestamp >= DATE_SUB(NOW(), INTERVAL 1 WEEK
+	`;
+
+	[err, res] = await db.query(query, [userId]);
 	if(err) throw err;
 
-	return !!res.changedRows;
+	// TODO: Check first round of the day and 7 day streak */
+
+	query = `UPDATE rounds SET ? WHERE id = ?`;
+
+	[err] = await db.query(query, [{state: 1}, roundId]);
+	if(err) throw err;
 }
