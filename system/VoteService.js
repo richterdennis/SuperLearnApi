@@ -1,3 +1,5 @@
+const ScoreService = require('./ScoreService');
+
 /**
  * Update a score for a question
  *
@@ -60,8 +62,78 @@ exports.voteQuestion = async function(questionId, userId, value){
 
 	// Balance question score
 	query = `UPDATE questions SET score = score + ? WHERE id = ?`;
+
 	[err] = await db.query(query, [balanceValue, questionId]);
 	if(err) throw err;
+
+	// Balance user score which created the question
+	balanceValue = 0;
+
+	// on down
+	if(value == -1)
+		balanceValue -= 25;
+
+	// on up
+	else if(value == 1)
+		balanceValue += 50;
+
+	// revert on down
+	if(res[0] && res[0].score == -1)
+		balanceValue += 25;
+
+	// revert on up
+	else if(res[0] && res[0].score == 1)
+		balanceValue -= 50;
+
+	await ScoreService.updateUserScoreByQuestionId(questionId, balanceValue);
+
+	// Balance user score which voted the question
+	balanceValue = 0;
+
+	// on up
+	if(value == 1)
+		balanceValue += 5;
+
+	// revert on up
+	else if(res[0] && res[0].score == 1)
+		balanceValue -= 5;
+
+	await ScoreService.updateUserScore(userId, balanceValue);
+
+	// Check on down vote if there is a report
+	if(value < 0) {
+		query = `
+			SELECT
+				q.score,
+				r.report_type_id
+			FROM questions q
+				LEFT JOIN reports r
+					ON q.id = r.question_id
+			WHERE q.id = ?
+		`;
+
+		[err, res] = await db.query(query, [questionId]);
+		if(err) throw err;
+
+		/*
+		 * report types
+		 * 1 => offensive
+		 * 2 => duplicate
+		 * 3 => spelling
+		 * 4 => troll
+		 * 5 => other
+		 */
+		if(
+			res[0].score > -5 ||
+				res[0].reportTypeId != 1 &&
+				res[0].reportTypeId != 4
+		) return;
+
+		query = 'UPDATE questions SET deleted = 1 WHERE id = ?';
+
+		[err] = await db.query(query, [questionId]);
+		if(err) throw err;
+	}
 }
 
 /**
@@ -125,9 +197,20 @@ exports.voteUser = async function(userId, voterId, value){
 	}
 
 	// Balance user score
-	query = `UPDATE user SET score = score + ? WHERE id = ?`;
-	[err] = await db.query(query, [balanceValue, userId]);
-	if(err) throw err;
+	await ScoreService.updateUserScore(userId, balanceValue * 100);
+
+	// Balance user score which voted the other user
+	balanceValue = 0;
+
+	// on up
+	if(value == 1)
+		balanceValue += 10;
+
+	// revert on up
+	else if(res[0] && res[0].score == 1)
+		balanceValue -= 10;
+
+	await ScoreService.updateUserScore(voterId, balanceValue);
 }
 
 /**
