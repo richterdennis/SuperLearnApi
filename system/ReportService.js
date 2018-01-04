@@ -61,5 +61,7 @@ exports.getUnprocessedReports = async function() {
 	const [err, res] = await db.query('SELECT id, report_type_id, text, question_id, user_id, created FROM reports WHERE processed = 0');
 	if(err) throw err;
 
+	res.created = res.created.getTime() / 1000 | 0;
+
 	return res;
 }

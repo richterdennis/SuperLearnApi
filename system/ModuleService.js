@@ -70,7 +70,7 @@ exports.getAllModules = async function(userId) {
 		[err, res] = await db.query(query, [module.id]);
 		if(err) throw err;
 
-		module.lastRequested = res[0] && res[0].timestamp || null;
+		module.lastRequested = res[0] && res[0].timestamp.getTime()  / 1000 | 0 || null;
 
 		// Add questions
 		query = `

@@ -29,7 +29,7 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 		id: res[0].id,
 		userId: res[0].user_id,
 		moduleId: res[0].module_id,
-		timestamp: res[0].timestamp,
+		timestamp: res[0].timestamp.getTime() / 1000 | 0,
 		state: res[0].state
 	};
 

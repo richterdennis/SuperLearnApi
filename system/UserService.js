@@ -49,6 +49,8 @@ exports.getUser = async function(userId) {
 
 	const user = res[0];
 
+	user.created = user.created.getTime() / 1000 | 0;
+
 	/**
 	 * Rank
 	 *
@@ -93,6 +95,7 @@ exports.getBest10User = async function() {
 
 	const user = res;
 	user.forEach(user => {
+		user.created = user.created.getTime() / 1000 | 0;
 		user.role = user.rank > 1 || user.score > 9999 ? 2 : 1;
 	});
 

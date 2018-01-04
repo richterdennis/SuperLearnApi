@@ -145,7 +145,7 @@ exports.completeQuestionByRes = async function(userId, row) {
 		score: row.score,
 		voted: await VoteService.getQuestionVoteByUser(userId, row.id),
 		userId: row.user_id,
-		created: row.created,
+		created: row.created.getTime() / 1000 | 0,
 		answers: await exports.getAnswers(row.id),
 		solution: await exports.getSolution(row.id),
 		starCounter: res[0] && res[0].star_counter || 0,
