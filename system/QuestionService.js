@@ -54,7 +54,8 @@ exports.createQuestion = async function(userId, questionData) {
 	if(!solution) return questionId;
 
 	data = {
-		text: solution.text
+		text: solution.text,
+		question_id: questionId
 	};
 
 	if(solution.image)
