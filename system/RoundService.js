@@ -144,6 +144,8 @@ exports.finishRound = async function(roundId, userId) {
 
 	query = `UPDATE rounds SET ? WHERE id = ?`;
 
-	[err] = await db.query(query, [{state: 1}, roundId]);
+	[err, res] = await db.query(query, [{state: 1}, roundId]);
 	if(err) throw err;
+
+	return !!res.changedRows;
 }
