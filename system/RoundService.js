@@ -105,6 +105,11 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 		ids.push(res[i].id);
 	}
 
+	if(!ids.length) {
+		round.questions = [];
+		return round;
+	}
+
 	[err, res] = await db.query('SELECT * FROM questions WHERE id IN (?)', [ids.slice(0, 10)]);
 	if(err) throw err;
 
