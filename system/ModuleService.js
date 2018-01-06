@@ -84,7 +84,44 @@ exports.getAllModules = async function(userId) {
 
 		module.questions = res[0] && res[0].count || 0;
 
-		// TODO: Add progress
+		// Add progress
+		query = `
+			SELECT
+				q.id,
+				IFNULL(uq.star_counter, 0) as star_counter
+			FROM questions q
+				LEFT JOIN user_questions_rel uq
+					ON q.id = uq.question_id AND uq.user_id = ?
+			WHERE
+				q.module_id = ?
+		`;
+		[err, res] = await db.query(query, [userId, module.id]);
+		if(err) throw err;
+
+		let one_counter = 0;
+		let two_counter = 0;
+		let three_or_more_counter = 0;
+
+		res.forEach(row => {
+			if(row.star_counter > 0)
+				one_counter++;
+
+			if(row.star_counter > 1)
+				two_counter++;
+
+			if(row.star_counter > 2)
+				three_or_more_counter++;
+		});
+
+		if(res.length) {
+			const percentOfOne = one_counter / res.length * 100;
+			const percentOfTwo = two_counter / res.length * 100;
+			const percentOfThree = three_or_more_counter / res.length * 100;
+
+			module.progress = parseInt((percentOfOne + percentOfTwo + percentOfThree) / 3) || 0;
+		}
+		else
+			module.progress = 0;
 
 		modules.push(module);
 	}
