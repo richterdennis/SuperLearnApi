@@ -7,10 +7,30 @@ const AuthService = require('./AuthService');
  * @return  {Number}        The user id
  */
 exports.createUser = async function(user) {
+	let query, err, res;
+
+	// Check email is THM mail
+	if(!user.email.endsWith('@iem.thm.de'))
+		return "EMAIL_NOT_THM";
+
+	// Check email and nickname already known in the db
+	query = `SELECT email, nickname FROM user WHERE email = ? OR nickname = ?`;
+	[err, res] = await db.query(query, [user.email, user.nickname]);
+	if(err) throw err;
+
+	if(res.length) {
+		if(res[0].email == user.email)
+			return "EMAIL_EXISTS";
+
+		if(res[0].nickname == user.nickname)
+			return "NICKNAME_EXISTS";
+
+		return -1;
+	}
+
 	let data = {
 		email:    user.email,
-		nickname: user.nickname,
-		rank_id:  user.rank
+		nickname: user.nickname
 	};
 
 	if(user.image)
@@ -18,7 +38,7 @@ exports.createUser = async function(user) {
 
 	data.password = await AuthService.generateHash(user.password);
 
-	let [err, res] = await db.query('INSERT INTO user SET ?', data);
+	[err, res] = await db.query('INSERT INTO user SET ?', data);
 	if(err) throw err;
 
 	const userId = res.insertId;

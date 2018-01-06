@@ -35,13 +35,18 @@ router.post('/me', AppKeyAuth, _(async function(req, res) {
 		!user.email    ||
 		!user.nickname ||
 		!user.password ||
-		!user.rank     ||
 		!user.studiesCourseId
 	) {
 		return res.status(405).end('Invalid input');
 	}
 
 	const userId = await UserService.createUser(user);
+	if(userId == -1)
+		return res.status(500).end('This should never be happen!');
+
+	if(isNaN(parseInt(userId)))
+		return res.status(405).end(userId);
+
 	const login = await LoginService.createLogin(userId);
 
 	res.status(201).json(login);
