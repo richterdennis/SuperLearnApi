@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="db@localhost" uuid="b75ad91d-5d34-48d8-bd0b-5b3511a7eea5">
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <resolve-scope>information_schema:|performance_schema:|timestampdb:|mysql:|superlearn:*</resolve-scope>
+    </data-source>
+  </component>
+</project>
