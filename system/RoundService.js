@@ -44,11 +44,6 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 		WHERE
 			q.module_id = ?
 			AND (
-				uq.star_counter < 3
-				OR
-				uq.star_counter IS NULL
-			)
-			AND (
 				q.user_id = ?
 				OR
 				q.deleted = 0 AND (
@@ -100,6 +95,28 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 		if(i > -1) res.splice(i, 1);
 	});
 
+	// Find 2 question with 0 times correct
+	for(let i = 0; i < res.length && ids.length < 6; i++) {
+		if(res[i].star_counter == 0)
+			ids.push(res[i].id);
+	}
+
+	ids.forEach(id => {
+		const i = res.findIndex(q => q.id == id);
+		if(i > -1) res.splice(i, 1);
+	});
+
+	// Fill with lower than 3 times correct
+	for(let i = 0; i < res.length && ids.length < 10; i++) {
+		if(res[i].star_counter < 3)
+			ids.push(res[i].id);
+	}
+
+	ids.forEach(id => {
+		const i = res.findIndex(q => q.id == id);
+		if(i > -1) res.splice(i, 1);
+	});
+
 	// Fill with random questions
 	for(let i = 0; i < res.length && ids.length < 10; i++) {
 		ids.push(res[i].id);
@@ -110,7 +127,7 @@ exports.getRoundFromModule = async function(moduleId, userId) {
 		return round;
 	}
 
-	[err, res] = await db.query('SELECT * FROM questions WHERE id IN (?)', [ids.slice(0, 10)]);
+	[err, res] = await db.query('SELECT * FROM questions WHERE id IN (?)', [ids]);
 	if(err) throw err;
 
 	// Simple shuffle of the array
