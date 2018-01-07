@@ -47,10 +47,10 @@ exports.getAllModules = async function(userId) {
 				ON sm.studies_course_id = us.studies_course_id
 			LEFT JOIN modules_user_rel mu
 				ON m.id = mu.module_id
-		WHERE us.user_id = ?
+		WHERE us.user_id = ? AND (mu.user_id = ? OR mu.user_id IS NULL)
 	`;
 
-	[err, mainRes] = await db.query(query, [userId]);
+	[err, mainRes] = await db.query(query, [userId, userId]);
 	if(err) throw err;
 
 	const modules = [];
