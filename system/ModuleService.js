@@ -41,13 +41,13 @@ exports.getAllModules = async function(userId) {
 			IFNULL(mu.status, 0) as status,
 			sm.semester
 		FROM modules m
+			LEFT JOIN modules_user_rel mu
+				ON m.id = mu.module_id AND mu.user_id = ?
 			JOIN studies_courses_modules_rel sm
 				ON m.id = sm.module_id
 			JOIN user_studies_courses_rel us
 				ON sm.studies_course_id = us.studies_course_id
-			LEFT JOIN modules_user_rel mu
-				ON m.id = mu.module_id
-		WHERE us.user_id = ? AND (mu.user_id = ? OR mu.user_id IS NULL)
+		WHERE us.user_id = ?
 	`;
 
 	[err, mainRes] = await db.query(query, [userId, userId]);
