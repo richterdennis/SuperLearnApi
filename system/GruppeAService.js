@@ -10,7 +10,7 @@ exports.createProgress = async function(userId, progressData) {
     // insert progress
     let data = {
         module_id:          1,
-        user_id:            progressData.user_id,
+        user_id:            userId,
         status:             1,
         level:              1,
         exp:                0,

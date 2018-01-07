@@ -4,7 +4,7 @@ const UserService = require('../system/UserService');
 const router = module.exports = exports = express.Router();
 
 /**
- * Creates a new question
+ * Creates a new progress
  *
  * @security  AppKeyAuth, TokenAuth
  *
@@ -41,7 +41,7 @@ router.post('/groupA/progress', AppKeyAuth, TokenAuth, _(async function(req, res
 }));
 
 /**
- * Updates an existing question
+ * Updates an existing progress
  * This can only be done if this is your question or you have manager rights
  *
  * @security  AppKeyAuth, TokenAuth
@@ -102,7 +102,7 @@ router.put('/groupA/progress', AppKeyAuth, TokenAuth, _(async function(req, res)
 }));
 
 /**
- * Get all my questions
+ * Get all my progress
  * Returns an question array of all my questions
  *
  * @security  AppKeyAuth, TokenAuth
