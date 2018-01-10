@@ -66,6 +66,7 @@ router.post('/groupA/progress', AppKeyAuth, TokenAuth, _(async function(req, res
 router.put('/groupA/progress', AppKeyAuth, TokenAuth, _(async function(req, res) {
     const userId = req.currentUser.id;
     const data = req.body;
+    let moduleId = data.module_id;
 
     if(
         !data ||
@@ -100,7 +101,7 @@ router.put('/groupA/progress', AppKeyAuth, TokenAuth, _(async function(req, res)
 
 
 
-    const status = await GruppeAService.updateProgress(userId, update);
+    const status = await GruppeAService.updateProgress(userId, moduleId, update);
 
     switch(status) {
         case 200: res.end('Object successfully updated');  break;

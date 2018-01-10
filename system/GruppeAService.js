@@ -28,8 +28,8 @@ exports.createProgress = async function(userId, progressData) {
  * @param   {Object}  data        The progress data to change
  * @return  {Number}              The status of the success
  */
-exports.updateProgress = async function(userId, data) {
-    [err] = await db.query('UPDATE modules_user_rel SET ? WHERE user_id = ?', [data, userId]);
+exports.updateProgress = async function(userId, moduleId, data) {
+    [err] = await db.query('UPDATE modules_user_rel SET ? WHERE user_id = ? AND module_id = ?', [data, userId, moduleId]);
     if(err) throw err;
 
     return 200;
@@ -68,7 +68,7 @@ exports.getTopTen = async function() {
  * @return  {Array}   moduleIds plus level
  */
 exports.getAllLevel = async function(userId) {
-    let [err, res] = await db.query('SELECT module_id, level, exp from modules_user_rel WHERE user_id = ? and module_id != 100', userId);
+    let [err, res] = await db.query('SELECT module_id, level, exp, reached_milestones from modules_user_rel WHERE user_id = ? and module_id != 100', userId);
     if(err) throw err;
     return res;
 }
