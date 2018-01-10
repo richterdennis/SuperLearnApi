@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c2a14524-0c05-4059-a582-47b553a3e4fa" name="Default" comment="" />
-    <list id="81aa731c-7a8a-4b12-9589-86ab8487520a" name="module error" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routers/GruppeARouter.js" afterPath="$PROJECT_DIR$/routers/GruppeARouter.js" />
+    <list default="true" id="c2a14524-0c05-4059-a582-47b553a3e4fa" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/system/GruppeAService.js" afterPath="$PROJECT_DIR$/system/GruppeAService.js" />
     </list>
+    <list id="81aa731c-7a8a-4b12-9589-86ab8487520a" name="module error" comment="" />
     <ignored path="D:\Dokumente\Projects\API\SuperLearnApi\.idea\shelf/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <file path="$PROJECT_DIR$/routers/GruppeARouter.js" ignored="false" />
-    <file path="$PROJECT_DIR$/system/GruppeAService.js" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,14 +15,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="GruppeARouter.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GruppeARouter.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routers/GruppeARouter.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
-              <caret line="181" column="0" lean-forward="true" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
+            <state relative-caret-position="378">
+              <caret line="35" column="52" lean-forward="false" selection-start-line="35" selection-start-column="52" selection-end-line="35" selection-end-column="52" />
               <folding>
                 <element signature="e#176#488#0" expanded="false" />
-                <element signature="n#!!block;n#function#0" expanded="false" />
                 <element signature="e#1000#1571#0" expanded="false" />
                 <element signature="n#!!block;n#function#1" expanded="false" />
                 <element signature="n#!!block;n#function#2" expanded="false" />
@@ -44,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GruppeAService.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GruppeAService.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/system/GruppeAService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="829">
-              <caret line="90" column="47" lean-forward="true" selection-start-line="90" selection-start-column="47" selection-end-line="90" selection-end-column="47" />
+            <state relative-caret-position="294">
+              <caret line="14" column="46" lean-forward="true" selection-start-line="14" selection-start-column="46" selection-end-line="14" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -154,7 +150,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1515596749345</updated>
-      <workItem from="1515596753355" duration="705000" />
+      <workItem from="1515596753355" duration="885000" />
     </task>
     <task id="LOCAL-00001" summary="module error">
       <created>1515597189555</created>
@@ -167,7 +163,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="705000" />
+    <option name="totallyTimeSpent" value="885000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="2500" height="1458" extended-state="6" />
@@ -230,21 +226,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/GruppeAService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="829">
-          <caret line="90" column="47" lean-forward="true" selection-start-line="90" selection-start-column="47" selection-end-line="90" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routers/GruppeARouter.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="181" column="0" lean-forward="true" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
+        <state relative-caret-position="378">
+          <caret line="35" column="52" lean-forward="false" selection-start-line="35" selection-start-column="52" selection-end-line="35" selection-end-column="52" />
           <folding>
             <element signature="e#176#488#0" expanded="false" />
-            <element signature="n#!!block;n#function#0" expanded="false" />
             <element signature="e#1000#1571#0" expanded="false" />
             <element signature="n#!!block;n#function#1" expanded="false" />
             <element signature="n#!!block;n#function#2" expanded="false" />
@@ -259,6 +246,14 @@
             <marker date="1515597283660" expanded="false" signature="7052:7442" ph="/** Gets all the possible duel opponents ...*/" />
             <marker date="1515597283660" expanded="false" signature="7524:7622" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/system/GruppeAService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="14" column="46" lean-forward="true" selection-start-line="14" selection-start-column="46" selection-end-line="14" selection-end-column="46" />
+          <folding />
         </state>
       </provider>
     </entry>

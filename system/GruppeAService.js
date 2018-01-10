@@ -14,7 +14,7 @@ exports.createProgress = async function(userId, progressData) {
         status:             1,
         level:              progressData.level,
         exp:                0,
-        reached_milestones: 0
+        reached_milestones: 1
     };
     let [err, res] = await db.query('INSERT INTO modules_user_rel SET ?', data);
     if(err) throw err;
