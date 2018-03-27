@@ -38,7 +38,6 @@ const RoundRouter         = require('./routers/RoundRouter');
 const StudiesCourseRouter = require('./routers/StudiesCourseRouter');
 const TagRouter           = require('./routers/TagRouter');
 const VoteRouter          = require('./routers/VoteRouter');
-const GruppeARouter       = require('./routers/GruppeARouter');
 
 // Start sql connection
 global.db = mysql.createConnection({
@@ -183,15 +182,6 @@ api.use('/api', TagRouter);
  * PUT /vote/:value/user/:userId          Updates an existing vote or create one
  */
 api.use('/api', VoteRouter);
-
-/**
- * progress
- *
- * POST /groupA/progress  	Creates a new progress
- * PUT  /groupA/progress	Updates an existing progress
- * GET	/groupA/progress	Gets a progress
- */
-api.use('/api', GruppeARouter);
 
 // Start server
 api.listen(config.API_PORT, function() {
