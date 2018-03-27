@@ -72,6 +72,10 @@ api.use(function(req, res, next) {
 	next();
 });
 
+api.get('/api', function(req, res) {
+	res.send('API is running!');
+});
+
 // Init routers
 
 /**
